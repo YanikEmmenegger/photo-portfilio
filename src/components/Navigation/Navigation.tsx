@@ -12,7 +12,7 @@ const Navigation = () => {
     }, []);
 
     const navItems = [
-        {name: "Search", href: "/search"},
+        {name: "Images", href: "/images"},
         {name: "Albums", href: "/albums", dropDownOptions: []},
         {name: "Contact", href: "/contact"},
     ];

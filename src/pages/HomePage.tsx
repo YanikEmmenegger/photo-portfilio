@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import {useImageContext} from '../contexts/ImageContext';
 import {motion, AnimatePresence} from 'framer-motion';
-import {fetchRandomLandscapeImages} from "../utils/photoService.ts";
+import {fetchRandomLandscapeImages} from "../utils/supabaseService.ts";
 import {Link} from "react-router-dom";
 
 const HomePage = () => {
@@ -44,7 +44,7 @@ const HomePage = () => {
         return () => clearInterval(interval);
     }, [images, setCurrentImageIndex, currentImageIndex]);
 
-    const imgUrlPrefix = 'https://yanik.pro/photo';
+    const imgUrlPrefix = BASE_URL.endsWith('/') ? BASE_URL : `${BASE_URL}/`;
     const currentImage = images[currentImageIndex];
     const backgroundImage = currentImage
         ? `url('${imgUrlPrefix}/${currentImage.filename}-big${currentImage.extension}')`
@@ -89,7 +89,7 @@ const HomePage = () => {
                                     currentImage.keywords.map((keyword, index) => (
                                         <span key={index}>
                                             {index > 0 && ', '}
-                                            <Link className={"hover:underline"} to={`/search/?keywords=${keyword}`}>{keyword}</Link>
+                                            <Link className={"hover:underline"} to={`/images/?keywords=${keyword}`}>{keyword}</Link>
                                         </span>
                                     ))
                                 }
