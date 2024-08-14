@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import UnpluginFonts from 'unplugin-fonts/vite';
 
 export default defineConfig({
-    base: '/photos/', // Base path for assets
+    base: '/', // Base path for assets
     plugins: [
         react(),
         UnpluginFonts({

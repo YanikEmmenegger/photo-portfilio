@@ -13,7 +13,7 @@ const App = () => {
     return (
         <UserProvider>
             <ImageProvider>
-                <Router basename={"/photos/"}>
+                <Router basename={"/"}>
                     <Navigation/>
                     <Routes>
                         <Route path="/" element={<HomePage/>}/>
