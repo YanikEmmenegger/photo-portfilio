@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import PhotoGallery from '../components/Gallery/PhotoGallery';
 import { Photo } from '../types/types';
 import { fetchImagesByKeywords, fetchRandomImages } from "../utils/supabaseService.ts";
-import {RxImage} from "react-icons/rx";
+import {AiOutlineLoading} from "react-icons/ai";
 
 const ImagesPage = () => {
     const [photos, setPhotos] = useState<Photo[]>([]);
@@ -36,7 +36,7 @@ const ImagesPage = () => {
     }, [location.search]);
 
     const renderContent = () => {
-        if (loading) return <div className="mx-auto mt-20 w-auto flex flex-col justify-center items-center text-center"><RxImage className={"animate-ping mb-5"} fontSize={"70px"}/>Loading...</div>;
+        if (loading) return <div className="mx-auto mt-20 w-auto flex flex-col justify-center items-center text-center"><AiOutlineLoading className={"animate-spin mb-5"} fontSize={"70px"}/>Loading...</div>;
         if (error) return <div className="w-full text-center text-red-500">{error}</div>;
         if (photos.length === 0) return <div className="mt-10 text-4xl w-full text-center">No photos found, try different filter</div>;
 

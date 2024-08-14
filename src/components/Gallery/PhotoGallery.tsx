@@ -1,56 +1,63 @@
-import {FC, useState, useRef, useEffect} from "react";
+import { FC, useState, useRef, useEffect } from "react";
 import PhotoElement from "./PhotoElement.tsx";
-import {Photo} from "../../types/types.ts";
-import {AiOutlineLoading} from "react-icons/ai";
+import { Photo } from "../../types/types.ts";
+import { AiOutlineLoading } from "react-icons/ai";
 
 interface PhotoGalleryProps {
     photos: Photo[];
     loading: boolean;
 }
 
-const PhotoGallery: FC<PhotoGalleryProps> = ({photos, loading}) => {
-    const [displayedPhotos, setDisplayedPhotos] = useState<Photo[]>([]);
-    const [page, setPage] = useState<number>(1);
-    const photosPerPage = 30; // Number of photos per page
+const PhotoGallery: FC<PhotoGalleryProps> = ({ photos, loading }) => {
+    const [visiblePhotos, setVisiblePhotos] = useState<{ [key: string]: boolean }>({});
     const observer = useRef<IntersectionObserver | null>(null);
-
-    useEffect(() => {
-        // Update displayed photos when the page or photos change
-        setDisplayedPhotos(photos.slice(0, page * photosPerPage));
-    }, [photos, page]);
 
     useEffect(() => {
         if (observer.current) observer.current.disconnect();
 
-        const loadMoreHandler = ([entry]: IntersectionObserverEntry[]) => {
-            if (entry.isIntersecting && !loading) {
-                setPage(prev => prev + 1); // Load more photos
+        observer.current = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        const { target } = entry;
+                        const filename = target.getAttribute('data-filename') || '';
+                        setVisiblePhotos((prev) => ({ ...prev, [filename]: true }));
+                        observer.current?.unobserve(target);
+                    }
+                });
+            },
+            {
+                root: null,
+                rootMargin: '20px',
+                threshold: 0.1,
             }
-        };
+        );
 
-        observer.current = new IntersectionObserver(loadMoreHandler, {
-            root: null,
-            rootMargin: '20px',
-            threshold: 1.0
-        });
-
-        const sentinel = document.getElementById('sentinel');
-        if (sentinel) {
-            observer.current.observe(sentinel);
-        }
+        const elements = document.querySelectorAll('.photo-item');
+        elements.forEach((element) => observer.current?.observe(element));
 
         return () => {
             if (observer.current) observer.current.disconnect();
         };
-    }, [loading]);
+    }, [photos]);
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-            {displayedPhotos.map((photo) => (
-                <PhotoElement key={photo.filename} photo={photo}/>
+        <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-1">
+            {photos.map((photo) => (
+                <div
+                    key={photo.filename}
+                    data-filename={photo.filename}
+                    className="photo-item mb-1 opacity-0 transition-opacity duration-500"
+                    style={{ opacity: visiblePhotos[photo.filename] ? 1 : 0 }}
+                >
+                    <PhotoElement photo={photo} isVisible={visiblePhotos[photo.filename]} />
+                </div>
             ))}
-            {loading && <div className="w-full text-center"><AiOutlineLoading/></div>}
-            <div id="sentinel" className="h-1"></div>
+            {loading && (
+                <div className="w-full text-center">
+                    <AiOutlineLoading className="animate-spin" />
+                </div>
+            )}
         </div>
     );
 };
