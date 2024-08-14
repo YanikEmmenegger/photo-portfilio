@@ -8,6 +8,7 @@ export interface Photo {
     gpsInfos: GPSInfos;
     description: string;
     keywords: string[];
+    title: string;
 }
 
 export interface PhotoSize {
@@ -18,4 +19,13 @@ export interface PhotoSize {
 export interface GPSInfos {
     latitude: number;
     longitude: number;
+}
+
+export interface KeywordGroup {
+    group: string;
+}
+
+export interface KeywordWithGroup {
+    keyword: string;
+    keyword_groups: string;
 }

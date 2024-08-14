@@ -1,15 +1,19 @@
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import PhotoGallery from '../components/Gallery/PhotoGallery';
-import { Photo } from '../types/types';
-import { fetchImagesByKeywords, fetchRandomImages } from "../utils/supabaseService.ts";
-import {AiOutlineLoading} from "react-icons/ai";
+import {useEffect, useState} from 'react';
+import {useLocation, useNavigate} from 'react-router-dom';
+import {Photo} from '../types/types';
+import {fetchImagesWithFilter} from "../utils/supabaseService.ts";
+import FilterComponent from "../components/Filter/FilterComponent.tsx";
+import {AnimatePresence} from 'framer-motion';
+import RenderGalleryContent from "../components/Gallery/renderGalleryContent.tsx";
 
 const ImagesPage = () => {
     const [photos, setPhotos] = useState<Photo[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [showFilters, setShowFilters] = useState(false);
     const location = useLocation();
+    const navigate = useNavigate();
+
 
     useEffect(() => {
         const fetchPhotos = async () => {
@@ -19,12 +23,17 @@ const ImagesPage = () => {
             try {
                 const query = new URLSearchParams(location.search);
                 const keywords = query.get('keywords')?.split(';') || [];
+                const KeywordFilterMode = query.get('KeywordFilterMode') === 'AND' ? 'AND' : 'OR';
 
-                const fetchedPhotos = keywords.length > 0
-                    ? await fetchImagesByKeywords(keywords)
-                    : await fetchRandomImages(1000);
+                const filter = {
+                    keywords: keywords,
+                    KeywordFilterMode: KeywordFilterMode
+                }
 
-                setPhotos(fetchedPhotos || []);
+                const newPhotos = await fetchImagesWithFilter(filter);
+
+                setPhotos(newPhotos || []);
+
             } catch (err) {
                 setError((err as Error).message);
             } finally {
@@ -35,18 +44,43 @@ const ImagesPage = () => {
         fetchPhotos();
     }, [location.search]);
 
-    const renderContent = () => {
-        if (loading) return <div className="mx-auto mt-20 w-auto flex flex-col justify-center items-center text-center"><AiOutlineLoading className={"animate-spin mb-5"} fontSize={"70px"}/>Loading...</div>;
-        if (error) return <div className="w-full text-center text-red-500">{error}</div>;
-        if (photos.length === 0) return <div className="mt-10 text-4xl w-full text-center">No photos found, try different filter</div>;
+    const resetFilters = () => {
+        navigate({search: ''}, {replace: true});
+    }
 
-        return <PhotoGallery photos={photos} loading={loading}/>;
-    };
+    // Determine if filters are set
+    const areFiltersActive = () => {
+        const query = new URLSearchParams(location.search);
+        return query.has('keywords') || query.has('KeywordFilterMode');
+    }
+
+
+
 
     return (
         <div className="w-full h-auto">
-
-            {renderContent()}
+            <div className="gap-2 hidden md:flex justify-end p-4">
+                {areFiltersActive() && (
+                    <button
+                        className="px-4 py-2 rounded-full text-sm font-bold bg-red-500 text-white"
+                        onClick={resetFilters}>
+                        Reset
+                    </button>
+                )}
+                <button
+                    className="px-4 py-2 rounded-full text-sm font-bold bg-blue-500 text-white"
+                    onClick={() => setShowFilters(true)}>
+                    Show Filters
+                </button>
+            </div>
+            <AnimatePresence>
+                {showFilters && (
+                    <FilterComponent onClose={() => setShowFilters(false)}/>
+                )}
+            </AnimatePresence>
+            <RenderGalleryContent loading={loading} error={error} photos={photos} showAllImages={false}
+                                  header={"No photos found, try a different filter"}
+                                  text={""}/>
         </div>
     );
 };

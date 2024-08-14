@@ -1,8 +1,8 @@
 import {useEffect, useState} from 'react';
 import {useImageContext} from '../contexts/ImageContext';
 import {motion, AnimatePresence} from 'framer-motion';
-import {fetchRandomLandscapeImages} from "../utils/supabaseService.ts";
 import {Link} from "react-router-dom";
+import {fetchRandomBackgroundImages} from "../utils/supabaseService.ts";
 
 const HomePage = () => {
     const BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
@@ -16,7 +16,7 @@ const HomePage = () => {
         }
 
         const loadImages = async () => {
-            const fetchedImages = await fetchRandomLandscapeImages(50); // Number of images to retrieve
+            const fetchedImages = await fetchRandomBackgroundImages(50); // Number of images to retrieve
             if (fetchedImages) {
                 setImages(fetchedImages);
             }
@@ -76,7 +76,7 @@ const HomePage = () => {
                                 exit={{opacity: 0}}
                                 transition={{duration: 1, ease: "easeInOut"}}
                             >
-                                {currentImage.description}
+                                {currentImage.title}
                             </motion.h1>
                             <motion.h2
                                 className="text-white text-2xl"

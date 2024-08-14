@@ -1,6 +1,6 @@
 // src/services/transformToPhoto.ts
 
-import {Photo} from '../types/types';
+import {KeywordGroup, Photo} from '../types/types';
 
 export const transformToPhoto = (item: {
     photo_id: number;
@@ -12,6 +12,7 @@ export const transformToPhoto = (item: {
     longitude: number;
     description: string;
     keyword_list: string[];
+    title: string;
 }): Photo => ({
     photo_id: item.photo_id,
     filename: item.filename,
@@ -26,4 +27,16 @@ export const transformToPhoto = (item: {
     },
     description: item.description,
     keywords: item.keyword_list,
+    title: item.title,
 });
+
+
+export const transformToKeywordWithGroup = (item: { keyword: string, keyword_groups: KeywordGroup | null }) => {
+
+    const keywordGroup = item.keyword_groups != null ? item.keyword_groups.group : 'Other';
+    return {
+        keyword: item.keyword,
+        keyword_groups: keywordGroup,
+    };
+}
+

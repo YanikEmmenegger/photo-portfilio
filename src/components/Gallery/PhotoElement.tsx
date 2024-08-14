@@ -5,9 +5,10 @@ import ImageOverlay from "./ImageOverlay.tsx";
 interface PhotoProps {
     photo: Photo;
     isVisible: boolean;
+    openLightbox: () => void;
 }
 
-const PhotoElement: FC<PhotoProps> = ({photo, isVisible}) => {
+const PhotoElement: FC<PhotoProps> = ({photo, isVisible, openLightbox}) => {
     const BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL.endsWith('/')
         ? import.meta.env.VITE_IMAGE_BASE_URL
         : `${import.meta.env.VITE_IMAGE_BASE_URL}/`;
@@ -25,12 +26,12 @@ const PhotoElement: FC<PhotoProps> = ({photo, isVisible}) => {
     }, [isVisible, originalUrl]);
 
     return (
-        <div className="relative overflow-hidden group">
+        <div className="relative overflow-hidden group cursor-pointer" >
             {/* Thumbnail Image */}
             <img
                 src={thumbnailUrl}
                 alt={photo.description}
-                className={`w-full object-cover transition-opacity duration-500 ${isLoading ? 'opacity-100' : 'opacity-0'} cursor-pointer`}
+                className={`w-full object-cover transition-opacity duration-500 ${isLoading ? 'opacity-100' : 'opacity-0'}`}
                 style={{aspectRatio: `${photo.size.width} / ${photo.size.height}`}}
                 onLoad={() => setIsLoading(false)}
             />
@@ -42,7 +43,7 @@ const PhotoElement: FC<PhotoProps> = ({photo, isVisible}) => {
                 onLoad={() => setIsLoading(false)}
             />
             {/* Overlay */}
-            <ImageOverlay photo={photo}/>
+            <ImageOverlay openLightbox={openLightbox} photo={photo}/>
         </div>
     );
 };

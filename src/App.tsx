@@ -6,21 +6,26 @@ import Navigation from "./components/Navigation/Navigation.tsx";
 import ImagesPage from "./pages/ImagesPage.tsx";
 import AlbumPage from "./pages/AlbumPage.tsx";
 import AlbumDetailPage from "./pages/AlbumDetailPage.tsx";
+import {UserProvider} from "./contexts/UserContext.tsx";
+import FavoritePage from "./pages/FavoritePage.tsx";
 
 const App = () => {
     return (
-        <ImageProvider>
-            <Router basename={"/photos/"}>
-                <Navigation/>
-                <Routes>
-                    <Route path="/" element={<HomePage/>}/>
-                    <Route path="/contact" element={<ContactPage/>}/>
-                    <Route path="/images" element={<ImagesPage/>}/>
-                    <Route path="/albums" element={<AlbumPage/>}/>
-                    <Route path="/albums/:albumId" element={<AlbumDetailPage />} />
-                </Routes>
-            </Router>
-        </ImageProvider>
+        <UserProvider>
+            <ImageProvider>
+                <Router basename={"/photos/"}>
+                    <Navigation/>
+                    <Routes>
+                        <Route path="/" element={<HomePage/>}/>
+                        <Route path="/contact" element={<ContactPage/>}/>
+                        <Route path="/images" element={<ImagesPage/>}/>
+                        <Route path="/albums" element={<AlbumPage/>}/>
+                        <Route path={"/favorites"} element={<FavoritePage/>}/>
+                        <Route path="/albums/:albumId" element={<AlbumDetailPage/>}/>
+                    </Routes>
+                </Router>
+            </ImageProvider>
+        </UserProvider>
     );
 };
 

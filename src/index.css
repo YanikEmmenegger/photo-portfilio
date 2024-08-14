@@ -49,3 +49,25 @@ body {
     padding: 0;
     font-weight: 100;
 }
+
+
+/* Hide scrollbar for WebKit browsers (Chrome, Safari) */
+body::-webkit-scrollbar {
+    width: 0; /* Hide vertical scrollbar */
+    height: 0; /* Hide horizontal scrollbar */
+}
+
+/* Hide scrollbar for Firefox */
+body {
+    scrollbar-width: none; /* Hide scrollbar */
+}
+
+/* Hide scrollbar for Internet Explorer and Edge */
+body {
+    -ms-overflow-style: none; /* Hide scrollbar */
+}
+
+/* Optional: Ensure that body is scrollable */
+body {
+    overflow: auto; /* Allow scrolling */
+}
