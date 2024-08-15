@@ -51,6 +51,22 @@ const KeywordFilter: FC<KeywordFilterProps> = ({
         setSelectedKeywords(newSelectedKeywords);
     };
 
+    const selectAllKeywords = (group: string) => {
+        const groupKeywords = groupedKeywords.get(group) || [];
+        const newSelectedKeywords = new Set(selectedKeywords);
+
+        groupKeywords.forEach((keyword) => newSelectedKeywords.add(keyword));
+
+        setSelectedKeywords(Array.from(newSelectedKeywords));
+    };
+
+    const deselectAllKeywords = (group: string) => {
+        const groupKeywords = groupedKeywords.get(group) || [];
+        const newSelectedKeywords = selectedKeywords.filter((keyword) => !groupKeywords.includes(keyword));
+
+        setSelectedKeywords(newSelectedKeywords);
+    };
+
     const toggleFilterMode = () => {
         const newFilterMode = filterMode === "AND" ? "OR" : "AND";
         setFilterMode(newFilterMode);
@@ -66,9 +82,9 @@ const KeywordFilter: FC<KeywordFilterProps> = ({
             {!loading && (
                 <div className="flex p-2 flex-col gap-2">
                     <div className="flex gap-2 items-center">
-                        <h1 className="text-4xl">Filter by Keywords:</h1>
+                        <h1 className="text-xl md:text-4xl">Filter by Keywords:</h1>
                         <button
-                            className={`px-4 py-2 rounded-full text-sm font-bold ${
+                            className={`md:px-4 md:py-2 px-2 py-1 rounded-full text-sm font-bold ${
                                 filterMode === "AND" ? "bg-green-500 text-white" : "bg-blue-500 text-white"
                             }`}
                             onClick={toggleFilterMode}
@@ -83,6 +99,8 @@ const KeywordFilter: FC<KeywordFilterProps> = ({
                             keywords={keywords}
                             selectedKeywords={selectedKeywords}
                             toggleKeyword={toggleKeyword}
+                            selectAll={() => selectAllKeywords(group)}
+                            deselectAll={() => deselectAllKeywords(group)}
                         />
                     ))}
                 </div>

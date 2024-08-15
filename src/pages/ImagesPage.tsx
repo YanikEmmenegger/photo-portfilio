@@ -51,7 +51,7 @@ const ImagesPage = () => {
     // Determine if filters are set
     const areFiltersActive = () => {
         const query = new URLSearchParams(location.search);
-        return query.has('keywords') || query.has('KeywordFilterMode');
+        return query.has('keywords');
     }
 
 
@@ -59,7 +59,7 @@ const ImagesPage = () => {
 
     return (
         <div className="w-full h-auto">
-            <div className="gap-2 hidden md:flex justify-end p-4">
+            <div className="gap-2 flex justify-end p-2  md:p-4">
                 {areFiltersActive() && (
                     <button
                         className="px-4 py-2 rounded-full text-sm font-bold bg-red-500 text-white"

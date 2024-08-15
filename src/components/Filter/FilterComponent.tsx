@@ -53,7 +53,7 @@ const FilterComponent: FC<FilterComponentProps> = ({onClose}) => {
                 animate={{opacity: 1, y: 0}}
                 exit={{opacity: 0, y: -50}}
                 transition={{duration: 0.2}}
-                className="p-10 w-3/4 max-w-[75%] md:max-w-[50%] rounded-2xl bg-black flex flex-col justify-between"
+                className="p-10 w-screen md:max-w-[75%] lg:max-w-[50%] h-screen md:h-auto md:max-h-screen rounded-2xl bg-black flex flex-col justify-between overflow-y-auto"
             >
                 <div>
                     <KeywordFilter
