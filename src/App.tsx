@@ -1,7 +1,7 @@
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import HomePage from './pages/HomePage.tsx';
 import ContactPage from './pages/ContactPage.tsx';
-import {ImageProvider} from './contexts/ImageContext';
+import {BackgroundImageProvider} from './contexts/BackgroundImageContext.tsx';
 import Navigation from "./components/Navigation/Navigation.tsx";
 import ImagesPage from "./pages/ImagesPage.tsx";
 import AlbumPage from "./pages/AlbumPage.tsx";
@@ -12,7 +12,7 @@ import FavoritePage from "./pages/FavoritePage.tsx";
 const App = () => {
     return (
         <UserProvider>
-            <ImageProvider>
+            <BackgroundImageProvider>
                 <Router basename={"/"}>
                     <Navigation/>
                     <Routes>
@@ -24,7 +24,7 @@ const App = () => {
                         <Route path="/albums/:albumId" element={<AlbumDetailPage/>}/>
                     </Routes>
                 </Router>
-            </ImageProvider>
+            </BackgroundImageProvider>
         </UserProvider>
     );
 };

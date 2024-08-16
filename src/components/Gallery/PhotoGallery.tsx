@@ -14,9 +14,6 @@ const PhotoGallery: FC<PhotoGalleryProps> = ({photos, loading}) => {
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null); // Index of the photo for lightbox
     const observer = useRef<IntersectionObserver | null>(null);
 
-
-
-
     useEffect(() => {
         if (observer.current) observer.current.disconnect();
 
@@ -47,22 +44,22 @@ const PhotoGallery: FC<PhotoGalleryProps> = ({photos, loading}) => {
     }, [photos]);
 
     const openLightbox = (index: number) => {
-        //if screen is small, do not open lightbox
+        // If screen is small, do not open lightbox
         if (window.innerWidth < 640) return;
-        setLightboxIndex(index)
+        setLightboxIndex(index);
     }
 
     return (
-        <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-2">
+        <div className="columns-1 sm:columns-2 md:columns-4 lg:columns-5 xl:columns-6 2xl:columns-7 gap-2">
             {photos.map((photo, index) => (
                 <div
                     key={photo.filename}
                     data-filename={photo.filename}
                     className="photo-item mb-2 opacity-0 transition-opacity duration-500"
                     style={{opacity: visiblePhotos[photo.filename] ? 1 : 0}}
-                    //onClick={() => openLightbox(index)} // Open lightbox on click
                 >
-                    <PhotoElement openLightbox={()=>openLightbox(index)} photo={photo} isVisible={visiblePhotos[photo.filename]}/>
+                    <PhotoElement openLightbox={() => openLightbox(index)} photo={photo}
+                                  isVisible={visiblePhotos[photo.filename]}/>
                 </div>
             ))}
             {loading && (

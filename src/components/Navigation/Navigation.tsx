@@ -54,12 +54,11 @@ const Navigation = () => {
 
     return (
         <nav
-            className={twMerge("w-full p-4 flex flex-col md:flex-row items-center justify-between bg-black", location.pathname === '/' && !isMobile ? "bg-opacity-0" : 'bg-opacity-100')}>
+            className={twMerge("w-full py-4 px-10 flex flex-col md:flex-row items-center justify-between bg-black", location.pathname === '/' && !isMobile ? "bg-opacity-0" : 'bg-opacity-100')}>
             <div className="flex items-center justify-between w-full md:w-auto  pb-2">
                 <Link to="/">
-                    <div
-                        className="hover:text-gray-300 transition-colors text-2xl md:text-3xl lg:text-5xl xl:text-7xl">KINAY
-                        PHOTO
+                    <div className="hover:text-gray-300 transition-colors text-2xl md:text-3xl lg:text-5xl xl:text-7xl">
+                        KINAY PHOTO
                     </div>
                 </Link>
                 <button

@@ -37,14 +37,14 @@ const ImageOverlay: FC<ImageOverlayProps> = ({photo, openLightbox}) => {
 
     return (
         <div
-            className='cursor-pointer absolute flex-col flex justify-between p-4 inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
-            <div className={"flex flex-col pr-5 grow"} onClick={openLightbox}>
-                <span className='text-3xl text-center w-max font-bold'>{photo.title}</span>
+            className='absolute flex-col flex justify-between inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
+            <div className={"flex p-5 flex-col grow cursor-pointer"} onClick={openLightbox}>
+                <span className='text-3xl text-center overflow-ellipsis w-max font-bold'>{photo.title}</span>
                 <span className='text-xl'>{photo.description}</span>
 
             </div>
-            <div className={"flex pt-5 justify-between"}>
-                <div className='flex gap-2'>
+            <div className={"flex justify-between"}>
+                <div onClick={openLightbox} className='flex pl-5 pb-5 cursor-pointer grow  gap-2'>
                     {photo.keywords.join(', ')}
                 </div>
                 <LikeButton loading={loading} onclick={() => handleLike()} isLiked={isLiked}/>

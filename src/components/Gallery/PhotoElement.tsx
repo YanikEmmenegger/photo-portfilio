@@ -1,5 +1,5 @@
-import {FC, useState, useEffect} from "react";
-import {Photo} from "../../types/types.ts";
+import { FC, useState, useEffect } from "react";
+import { Photo } from "../../types/types.ts";
 import ImageOverlay from "./ImageOverlay.tsx";
 
 interface PhotoProps {
@@ -8,7 +8,7 @@ interface PhotoProps {
     openLightbox: () => void;
 }
 
-const PhotoElement: FC<PhotoProps> = ({photo, isVisible, openLightbox}) => {
+const PhotoElement: FC<PhotoProps> = ({ photo, isVisible, openLightbox }) => {
     const BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL.endsWith('/')
         ? import.meta.env.VITE_IMAGE_BASE_URL
         : `${import.meta.env.VITE_IMAGE_BASE_URL}/`;
@@ -26,14 +26,17 @@ const PhotoElement: FC<PhotoProps> = ({photo, isVisible, openLightbox}) => {
     }, [isVisible, originalUrl]);
 
     return (
-        <div className="relative overflow-hidden group cursor-pointer" >
+        <div
+            className="relative overflow-hidden group"
+            style={{ aspectRatio: `${photo.size.width} / ${photo.size.height}` }}
+        >
             {/* Thumbnail Image */}
             <img
                 src={thumbnailUrl}
                 alt={photo.description}
-                className={`w-full object-cover transition-opacity duration-500 ${isLoading ? 'opacity-100' : 'opacity-0'}`}
-                style={{aspectRatio: `${photo.size.width} / ${photo.size.height}`}}
+                className={`w-full h-full object-cover transition-opacity duration-500 ${isLoading ? 'opacity-100' : 'opacity-0'}`}
                 onLoad={() => setIsLoading(false)}
+                loading="lazy"
             />
             {/* Original Image */}
             <img
@@ -41,9 +44,11 @@ const PhotoElement: FC<PhotoProps> = ({photo, isVisible, openLightbox}) => {
                 alt={photo.description}
                 className={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-500 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
                 onLoad={() => setIsLoading(false)}
+                loading="lazy"
+                style={{ visibility: imgSrc ? 'visible' : 'hidden' }}
             />
             {/* Overlay */}
-            <ImageOverlay openLightbox={openLightbox} photo={photo}/>
+            <ImageOverlay openLightbox={openLightbox} photo={photo} />
         </div>
     );
 };

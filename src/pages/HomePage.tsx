@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {useImageContext} from '../contexts/ImageContext';
+import {useImageContext} from '../contexts/BackgroundImageContext.tsx';
 import {motion, AnimatePresence} from 'framer-motion';
 import {Link} from "react-router-dom";
 import {fetchRandomBackgroundImages} from "../utils/supabaseService.ts";
@@ -42,7 +42,7 @@ const HomePage = () => {
         }, 10000); // Change image every 10 seconds
 
         return () => clearInterval(interval);
-    }, [images, setCurrentImageIndex, currentImageIndex]);
+    }, [images, setCurrentImageIndex, currentImageIndex, BASE_URL]);
 
     const imgUrlPrefix = BASE_URL.endsWith('/') ? BASE_URL : `${BASE_URL}/`;
     const currentImage = images[currentImageIndex];
