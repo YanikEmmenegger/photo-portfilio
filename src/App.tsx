@@ -8,6 +8,7 @@ import AlbumPage from "./pages/AlbumPage.tsx";
 import AlbumDetailPage from "./pages/AlbumDetailPage.tsx";
 import {UserProvider} from "./contexts/UserContext.tsx";
 import FavoritePage from "./pages/FavoritePage.tsx";
+import {Toaster} from "react-hot-toast";
 
 const App = () => {
     return (
@@ -25,6 +26,7 @@ const App = () => {
                     </Routes>
                 </Router>
             </BackgroundImageProvider>
+            <Toaster/>
         </UserProvider>
     );
 };

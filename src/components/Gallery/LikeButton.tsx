@@ -12,7 +12,7 @@ const LikeButton: FC<LikeButtonProps> = ({isLiked, onclick, loading}) => {
     return (
         <div
             onClick={loading ? undefined : onclick} // Disable click when loading
-            className="relative pr-5  cursor-pointer flex items-center justify-center"
+            className="relative px-5 py-1  cursor-pointer flex items-center justify-center"
             style={{width: 24, height: 24}} // Ensure the button has a fixed size
         >
             {loading ? (

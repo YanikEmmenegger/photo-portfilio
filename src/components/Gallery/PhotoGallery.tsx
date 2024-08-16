@@ -1,17 +1,15 @@
 import {FC, useState, useRef, useEffect} from "react";
-import PhotoElement from "./PhotoElement.tsx";
-import Lightbox from "./Lightbox.tsx";
-import {Photo} from "../../types/types.ts";
-import {AiOutlineLoading} from "react-icons/ai";
+import PhotoElement from "./PhotoElement";
+import Lightbox from "./Lightbox";
+import {Photo} from "../../types/types";
 
 interface PhotoGalleryProps {
     photos: Photo[];
-    loading: boolean;
 }
 
-const PhotoGallery: FC<PhotoGalleryProps> = ({photos, loading}) => {
+const PhotoGallery: FC<PhotoGalleryProps> = ({photos}) => {
     const [visiblePhotos, setVisiblePhotos] = useState<{ [key: string]: boolean }>({});
-    const [lightboxIndex, setLightboxIndex] = useState<number | null>(null); // Index of the photo for lightbox
+    const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
     const observer = useRef<IntersectionObserver | null>(null);
 
     useEffect(() => {
@@ -21,10 +19,9 @@ const PhotoGallery: FC<PhotoGalleryProps> = ({photos, loading}) => {
             (entries) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
-                        const {target} = entry;
-                        const filename = target.getAttribute('data-filename') || '';
+                        const filename = entry.target.getAttribute('data-filename') || '';
                         setVisiblePhotos((prev) => ({...prev, [filename]: true}));
-                        observer.current?.unobserve(target);
+                        observer.current?.unobserve(entry.target);
                     }
                 });
             },
@@ -35,7 +32,7 @@ const PhotoGallery: FC<PhotoGalleryProps> = ({photos, loading}) => {
             }
         );
 
-        const elements = document.querySelectorAll('.photo-item');
+        const elements = Array.from(document.querySelectorAll('.photo-item'));
         elements.forEach((element) => observer.current?.observe(element));
 
         return () => {
@@ -44,30 +41,29 @@ const PhotoGallery: FC<PhotoGalleryProps> = ({photos, loading}) => {
     }, [photos]);
 
     const openLightbox = (index: number) => {
-        // If screen is small, do not open lightbox
-        if (window.innerWidth < 640) return;
-        setLightboxIndex(index);
-    }
+        if (window.innerWidth >= 0) {
+            setLightboxIndex(index);
+        }
+    };
 
     return (
-        <div className="columns-1 sm:columns-2 md:columns-4 lg:columns-5 xl:columns-6 2xl:columns-7 gap-2">
+        <div className="grid gap-1 grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {photos.map((photo, index) => (
                 <div
-                    key={photo.filename}
+                    key={index}
                     data-filename={photo.filename}
-                    className="photo-item mb-2 opacity-0 transition-opacity duration-500"
-                    style={{opacity: visiblePhotos[photo.filename] ? 1 : 0}}
-                >
-                    <PhotoElement openLightbox={() => openLightbox(index)} photo={photo}
-                                  isVisible={visiblePhotos[photo.filename]}/>
-                </div>
+                    className="photo-item bg-teal-900 opacity-0 transition-opacity duration-500"
+                    style={{
+                        opacity: visiblePhotos[photo.filename] ? 1 : 0,
+                        gridRowEnd: `span ${Math.ceil(photo.size.height / photo.size.width * 10)}`,
+                        aspectRatio: `${photo.size.width} / ${photo.size.height}`,
+                    }}>
+                    <PhotoElement
+                        photo={photo}
+                        isVisible={visiblePhotos[photo.filename] || false}
+                        openLightbox={() => openLightbox(index)}
+                    /></div>
             ))}
-            {loading && (
-                <div className="w-full text-center">
-                    <AiOutlineLoading className="animate-spin"/>
-                </div>
-            )}
-            {/* Lightbox */}
             {lightboxIndex !== null && (
                 <Lightbox
                     photos={photos}

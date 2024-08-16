@@ -1,9 +1,9 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
-import {v4 as uuidv4} from 'uuid';
+import {supabase} from '../clients/supabaseClient'; // Ensure correct import path
 
 // Define the context type
 interface UserContextType {
-    userId: string;
+    userId: string | null;
     likedImageIDs: number[];
     fetchLikedImages: () => void;
     addLikedImage: (photoId: number) => Promise<boolean>;
@@ -13,70 +13,111 @@ interface UserContextType {
 // Create a context with default values
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-// Helper functions for local storage
-const getStoredLikedImages = (userId: string): number[] => {
-    const stored = localStorage.getItem(`likedImages_${userId}`);
-    return stored ? JSON.parse(stored) : [];
-};
-
-const saveLikedImages = (userId: string, likedImages: number[]) => {
-    localStorage.setItem(`likedImages_${userId}`, JSON.stringify(likedImages));
-};
-
 // Create a provider component
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
-    const [userId, setUserId] = useState<string>('');
+    const [userId, setUserId] = useState<string | null>(null);
     const [likedImageIDs, setLikedImageIDs] = useState<number[]>([]);
 
-    const fetchLikedImages = () => {
-        console.log('fetching liked images');
+    // Fetch liked images from the database
+    const fetchLikedImages = async () => {
         if (userId) {
-            const images = getStoredLikedImages(userId);
-            setLikedImageIDs(images);
+            const {data: likes, error} = await supabase
+                .from('likes')
+                .select('photo_id')
+                .eq('user_id', userId);
+
+            if (error) {
+                console.error('Error fetching liked images:', error);
+                return;
+            }
+
+            const imageIds = likes?.map(like => like.photo_id) || [];
+            setLikedImageIDs(imageIds);
         }
     };
 
+    // Add a liked image to the database
     const addLikedImage = async (photoId: number) => {
-        setTimeout(() => {
-            if (userId) {
-                const updatedLikedImages = [...likedImageIDs, photoId];
-                setLikedImageIDs(updatedLikedImages);
-                saveLikedImages(userId, updatedLikedImages);
-                return true;
+        if (userId) {
+            const {error} = await supabase
+                .from('likes')
+                .insert([{user_id: userId, photo_id: photoId}]);
+
+            if (error) {
+                console.error('Error adding liked image:', error);
+                return false;
             }
-            return false;
-        }, 500);
+
+            setLikedImageIDs(prev => [...prev, photoId]);
+            return true;
+        }
         return false;
     };
 
+    // Remove a liked image from the database
     const removeLikedImage = async (photoId: number) => {
-        setTimeout(() => {
-            if (userId) {
-                const updatedLikedImages = likedImageIDs.filter(id => id !== photoId);
-                setLikedImageIDs(updatedLikedImages);
-                saveLikedImages(userId, updatedLikedImages);
-                return true;
+        if (userId) {
+            const {error} = await supabase
+                .from('likes')
+                .delete()
+                .match({user_id: userId, photo_id: photoId});
+
+            if (error) {
+                console.error('Error removing liked image:', error);
+                return false;
             }
-            return false;
-        }, 500);
+
+            setLikedImageIDs(prev => prev.filter(id => id !== photoId));
+            return true;
+        }
         return false;
     };
 
     useEffect(() => {
-        // Try to get the userId from local storage
-        let storedUserId = localStorage.getItem('userId');
+        // Fetch current session
+        const fetchSession = async () => {
+            const {data: {session}, error} = await supabase.auth.getSession();
+            if (error) {
+                console.error('Error fetching session:', error);
+                return;
+            }
 
-        if (!storedUserId || storedUserId === 'undefined' || storedUserId === '') {
-            // If not found, generate a new UUID
-            storedUserId = uuidv4();
-            localStorage.setItem('userId', storedUserId);
+            if (!session?.user?.id) {
+                const {data, error: signInError} = await supabase.auth.signInAnonymously();
+                if (signInError) {
+                    console.error('Error creating anonymous user:', signInError);
+                    return;
+                }
+                setUserId(data?.user?.id || null);
+            } else {
+                setUserId(session.user.id);
+            }
+        };
+
+        fetchSession();
+
+        // Subscribe to authentication state changes
+        const {data: authListener} = supabase.auth.onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_IN') {
+                setUserId(session?.user?.id || null);
+            } else if (event === 'SIGNED_OUT') {
+                setUserId(null);
+                setLikedImageIDs([]);
+            }
+        });
+
+        // Cleanup subscription on component unmount
+        return () => {
+            authListener?.subscription?.unsubscribe();
+        };
+    }, []);
+
+    // Fetch liked images whenever userId changes
+    useEffect(() => {
+        if (userId) {
+            fetchLikedImages();
         }
-
-        setUserId(storedUserId);
-
-        // Fetch liked images on load
-        fetchLikedImages();
-    }, [userId]);
+    }, [ userId]);
 
     return (
         <UserContext.Provider value={{userId, likedImageIDs, fetchLikedImages, addLikedImage, removeLikedImage}}>
@@ -86,6 +127,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
 };
 
 // Create a custom hook for using the context
+// eslint-disable-next-line react-refresh/only-export-components
 export const useUser = (): UserContextType => {
     const context = useContext(UserContext);
     if (context === undefined) {

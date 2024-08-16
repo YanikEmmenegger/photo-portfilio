@@ -20,28 +20,40 @@ const fetchFromSupabase = async <T>(rpcFunction: string, params: Record<string, 
 export const fetchImagesWithFilter = async (filter: {
     keywords?: string[],
     KeywordFilterMode?: string
-}): Promise<Photo[] | null> => {
+}, limit: number, offset: number): Promise<Photo[] | null> => {
     if (!filter.keywords || filter.keywords.length === 0) {
-        return await fetchRandomImages(500);
+        return await fetchAllImages(limit, offset); // Changed to use limit
     }
 
     const rpcFunction = filter.KeywordFilterMode === 'AND'
         ? 'get_photos_by_keywords_and'
         : 'get_photos_by_keywords_or';
 
-    return await fetchFromSupabase<Photo>(rpcFunction, {keywords: filter.keywords});
+    return await fetchFromSupabase<Photo>(rpcFunction, {
+        keywords: filter.keywords,
+        limit_count: limit,
+        offset_count: offset
+    });
 };
 
 // Fetch photos by keywords with OR condition
-export const fetchImagesByKeywordsOr = async (keywords: string[]): Promise<Photo[] | null> => {
+export const fetchImagesByKeywordsOr = async (keywords: string[], limit: number, offset: number): Promise<Photo[] | null> => {
     if (keywords.length === 0) return null;
-    return await fetchFromSupabase<Photo>('get_photos_by_keywords_or', {keywords});
+    return await fetchFromSupabase<Photo>('get_photos_by_keywords_or', {
+        keywords,
+        limit_count: limit,
+        offset_count: offset
+    });
 };
 
 // Fetch photos by keywords with AND condition
-export const fetchImagesByKeywordsAnd = async (keywords: string[]): Promise<Photo[] | null> => {
+export const fetchImagesByKeywordsAnd = async (keywords: string[], limit: number, offset: number): Promise<Photo[] | null> => {
     if (keywords.length === 0) return null;
-    return await fetchFromSupabase<Photo>('get_photos_by_keywords_and', {keywords});
+    return await fetchFromSupabase<Photo>('get_photos_by_keywords_and', {
+        keywords,
+        limit_count: limit,
+        offset_count: offset
+    });
 };
 
 // Fetch random background images
@@ -52,6 +64,15 @@ export const fetchRandomBackgroundImages = async (limitCount: number): Promise<P
 // Fetch random images
 export const fetchRandomImages = async (limitCount: number): Promise<Photo[] | null> => {
     return await fetchFromSupabase<Photo>('get_random_images', {limit_count: limitCount});
+};
+
+// Fetch all images with pagination
+export const fetchAllImages = async (limitCount: number, offset: number): Promise<Photo[] | null> => {
+    console.log('fetching images');
+    return await fetchFromSupabase<Photo>('get_images_ordered_by_date', {
+        limit_count: limitCount,
+        offset_count: offset
+    });
 };
 
 // Fetch all keywords
@@ -75,6 +96,5 @@ export const fetchAllKeywords = async (): Promise<KeywordWithGroup[]> => {
 // Fetch images by an array of photo_ids
 export const fetchImagesByIds = async (photoIds: number[]): Promise<Photo[] | null> => {
     if (photoIds.length === 0) return null;
-    console.log(photoIds);
-    return await fetchFromSupabase<Photo>('get_images_by_ids', { photo_ids: photoIds });
+    return await fetchFromSupabase<Photo>('get_images_by_ids', {photo_ids: photoIds});
 };

@@ -79,7 +79,7 @@ const HomePage = () => {
                                 {currentImage.title}
                             </motion.h1>
                             <motion.h2
-                                className="text-white text-2xl"
+                                className="text-white text-center text-2xl"
                                 initial={{opacity: 0}}
                                 animate={{opacity: 1}}
                                 exit={{opacity: 0}}

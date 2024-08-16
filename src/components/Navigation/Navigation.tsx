@@ -21,7 +21,6 @@ const Navigation = () => {
     useEffect(() => {
         // Reset `isOpen` when screen size changes
         const handleResize = () => {
-            console.log('res')
             if (window.innerWidth <= 768) {
                 setIsOpen(false);
                 setIsMobile(true);
