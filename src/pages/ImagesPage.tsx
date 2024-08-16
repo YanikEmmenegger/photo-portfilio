@@ -1,11 +1,12 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Photo } from '../types/types';
-import { fetchImagesWithFilter } from "../utils/supabaseService.ts";
+import {useState, useEffect, useCallback} from 'react';
+import {useLocation, useNavigate} from 'react-router-dom';
+import {Photo} from '../types/types';
+import {fetchImagesWithFilter} from "../utils/supabaseService.ts";
 import FilterComponent from "../components/Filter/FilterComponent.tsx";
-import { AnimatePresence } from 'framer-motion';
+import {AnimatePresence} from 'framer-motion';
 import RenderGalleryContent from "../components/Gallery/renderGalleryContent.tsx";
 import debounce from 'lodash/debounce';
+import {AiOutlineLoading} from "react-icons/ai";
 
 const ImagesPage = () => {
     const [showFilters, setShowFilters] = useState(false);
@@ -15,6 +16,7 @@ const ImagesPage = () => {
     const [hasMore, setHasMore] = useState(true);
     const [limit] = useState(30);
     const [loading, setLoading] = useState(true);
+    const [isLoadingMore, setIsLoadingMore] = useState(false)
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -22,7 +24,7 @@ const ImagesPage = () => {
     // Fetch images with or without filters
     const fetchImages = async () => {
         setError(null);
-        //setLoading(true);
+        if (!loading) setIsLoadingMore(true);
         try {
             const query = new URLSearchParams(location.search);
             const keywords = query.get('keywords')?.split(';') || [];
@@ -44,6 +46,7 @@ const ImagesPage = () => {
             setError((err as Error).message);
         } finally {
             setLoading(false);
+            setIsLoadingMore(false);
         }
     };
 
@@ -60,9 +63,10 @@ const ImagesPage = () => {
         if (hasMore && !loading) {
             fetchImages();
         }
-    }, [offset, hasMore]);
+    }, [offset, hasMore, loading]);
 
     // Handle scroll event to detect when user is at the bottom
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const handleScroll = useCallback(debounce(() => {
         if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 300) {
             if (hasMore) {
@@ -79,7 +83,7 @@ const ImagesPage = () => {
     }, [handleScroll]);
 
     const resetFilters = () => {
-        navigate({ search: '' }, { replace: true });
+        navigate({search: ''}, {replace: true});
     };
 
     // Determine if filters are set
@@ -106,7 +110,7 @@ const ImagesPage = () => {
             </div>
             <AnimatePresence>
                 {showFilters && (
-                    <FilterComponent onClose={() => setShowFilters(false)} />
+                    <FilterComponent onClose={() => setShowFilters(false)}/>
                 )}
             </AnimatePresence>
             <RenderGalleryContent
@@ -117,6 +121,18 @@ const ImagesPage = () => {
                 text={""}
                 showAllImages={false}
             />
+            {!hasMore && (
+                <div className={"w-full p-20 text-center"}>
+                    <p className={"text-xl"}>No more images to show</p>
+                </div>
+            )}
+            {
+                isLoadingMore && (
+                    <div className="w-full text-5xl flex items-center justify-center">
+                       <AiOutlineLoading className={"animate-spin"}/>
+                    </div>
+                )
+            }
         </div>
     );
 };
