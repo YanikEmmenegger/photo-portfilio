@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import {useImageContext} from '../contexts/BackgroundImageContext.tsx';
 import {motion, AnimatePresence} from 'framer-motion';
 import {Link} from "react-router-dom";
-import {fetchRandomBackgroundImages} from "../utils/supabaseService.ts";
+import {fetchRandomBackgroundPhotos} from "../utils/supabaseService.ts";
 
 const HomePage = () => {
     const BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
@@ -16,7 +16,7 @@ const HomePage = () => {
         }
 
         const loadImages = async () => {
-            const fetchedImages = await fetchRandomBackgroundImages(50); // Number of images to retrieve
+            const fetchedImages = await fetchRandomBackgroundPhotos(50); // Number of images to retrieve
             if (fetchedImages) {
                 setImages(fetchedImages);
             }
@@ -39,7 +39,7 @@ const HomePage = () => {
         const interval = setInterval(() => {
             preloadNextImage(); // Start preloading the next image
             setCurrentImageIndex(prevIndex => (prevIndex + 1) % images.length);
-        }, 10000); // Change image every 10 seconds
+        }, 4000); // Change image every 10 seconds
 
         return () => clearInterval(interval);
     }, [images, setCurrentImageIndex, currentImageIndex, BASE_URL]);
@@ -78,6 +78,7 @@ const HomePage = () => {
                             >
                                 {currentImage.title}
                             </motion.h1>
+
                             <motion.h2
                                 className="text-white text-center text-2xl"
                                 initial={{opacity: 0}}

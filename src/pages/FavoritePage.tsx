@@ -1,9 +1,9 @@
 
 import {useEffect, useState} from "react";
 import {Photo} from "../types/types.ts";
-import {fetchImagesByIds} from "../utils/supabaseService.ts";
 import {useUser} from "../contexts/UserContext.tsx";
 import RenderGalleryContent from "../components/Gallery/renderGalleryContent.tsx";
+import {fetchPhotosByIds} from "../utils/supabaseService.ts";
 
 
 const FavoritePage = () => {
@@ -21,7 +21,7 @@ const FavoritePage = () => {
 
             try {
 
-                const newPhotos = await fetchImagesByIds(likedImageIDs);
+                const newPhotos = await fetchPhotosByIds(likedImageIDs);
 
                 setPhotos(newPhotos || []);
 

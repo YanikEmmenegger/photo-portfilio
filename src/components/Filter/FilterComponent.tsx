@@ -2,6 +2,7 @@ import {FC, useEffect, useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 import KeywordFilter from "./KeywordFilter.tsx";
 import {motion} from "framer-motion";
+import {twMerge} from "tailwind-merge";
 
 interface FilterComponentProps {
     onClose: () => void;
@@ -20,7 +21,6 @@ const FilterComponent: FC<FilterComponentProps> = ({onClose}) => {
         const filterModeFromQuery = query.get("KeywordFilterMode") === "AND" ? "AND" : "OR";
 
         setSelectedKeywords(keywordsFromQuery);
-        // Always initialize filterMode to "OR" unless it is explicitly set to "AND"
         setKeywordFilterMode(filterModeFromQuery || "OR");
     }, [location.search]);
 
@@ -31,13 +31,21 @@ const FilterComponent: FC<FilterComponentProps> = ({onClose}) => {
         }
         query.set("KeywordFilterMode", KeywordFilterMode);
 
-        // Replace the current URL with the new query parameters
         navigate({search: query.toString()}, {replace: true});
         onClose(); // Close the filter component after applying
     };
 
     const cancelFilters = () => {
         onClose(); // Just close the filter component without applying any changes
+    };
+
+    const clearFilters = () => {
+        setSelectedKeywords([]);
+        setKeywordFilterMode("OR");
+    }
+
+    const removeSelectedKeyword = (keyword: string) => {
+        setSelectedKeywords(selectedKeywords.filter((k) => k !== keyword));
     };
 
     return (
@@ -56,6 +64,23 @@ const FilterComponent: FC<FilterComponentProps> = ({onClose}) => {
                 className="p-10 w-screen md:max-w-[75%] lg:max-w-[50%] h-screen md:h-auto md:max-h-screen rounded-2xl bg-black flex flex-col justify-between overflow-y-auto"
             >
                 <div>
+                    {selectedKeywords.length > 0 && (
+                        <div className="mb-4 hidden">
+                            <h2 className="text-lg font-bold mb-2">Selected Keywords:</h2>
+                            <div className="flex flex-wrap gap-2">
+                                {selectedKeywords.map((keyword) => (
+                                    <span
+                                        key={keyword}
+                                        className="px-3 py-1 rounded-full bg-blue-500 text-white text-sm cursor-pointer"
+                                        onClick={() => removeSelectedKeyword(keyword)}
+                                    >
+                                        {keyword} ×
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
                     <KeywordFilter
                         selectedKeywords={selectedKeywords}
                         setSelectedKeywords={setSelectedKeywords}
@@ -76,6 +101,12 @@ const FilterComponent: FC<FilterComponentProps> = ({onClose}) => {
                         onClick={cancelFilters}
                     >
                         Cancel
+                    </button>
+                    <button
+                        className={twMerge("px-4 py-2 rounded-full text-sm font-bold bg-gray-500 text-white", selectedKeywords.length === 0 && "hidden")}
+                        onClick={clearFilters}
+                    >
+                        Clear Filters
                     </button>
                 </div>
             </motion.div>

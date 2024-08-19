@@ -3,6 +3,7 @@ import {Photo} from "../../types/types.ts";
 import {useUser} from "../../contexts/UserContext.tsx";
 import LikeButton from "./LikeButton.tsx";
 import toast from "react-hot-toast";
+import {AiOutlineFullscreen} from "react-icons/ai";
 
 interface ImageOverlayProps {
     photo: Photo;
@@ -50,6 +51,9 @@ const ImageOverlay: FC<ImageOverlayProps> = ({photo, openLightbox}) => {
                     {photo.keywords.join(', ')}
                 </div>
                 <LikeButton loading={loading} onclick={handleLike} isLiked={isLiked}/>
+                <button onClick={openLightbox} className={"absolute right-8 md:hidden top-5  cursor-pointer items-center justify-center"}>
+                    <AiOutlineFullscreen size={24}/>
+                </button>
             </div>
         </div>
     );

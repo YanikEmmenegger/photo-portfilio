@@ -1,7 +1,8 @@
-import { FC, useEffect, useState } from "react";
-import { fetchAllKeywords } from "../../utils/supabaseService.ts";
+import {FC, useEffect, useState} from "react";
+import {fetchAllKeywords} from "../../utils/supabaseService.ts";
 import KeywordGroup from "./KeywordGroup.tsx";
-import { motion } from "framer-motion";
+import {motion} from "framer-motion";
+import {debounce} from "lodash";
 
 interface KeywordFilterProps {
     selectedKeywords: string[];
@@ -14,10 +15,11 @@ const KeywordFilter: FC<KeywordFilterProps> = ({
                                                    selectedKeywords,
                                                    setSelectedKeywords,
                                                    filterMode,
-                                                   setFilterMode
+                                                   setFilterMode,
                                                }) => {
     const [groupedKeywords, setGroupedKeywords] = useState<Map<string, string[]>>(new Map());
     const [loading, setLoading] = useState<boolean>(true);
+    const [searchQuery, setSearchQuery] = useState<string>("");
 
     useEffect(() => {
         const fetchKeywords = async () => {
@@ -25,7 +27,7 @@ const KeywordFilter: FC<KeywordFilterProps> = ({
                 const keywords = await fetchAllKeywords();
 
                 const grouped = new Map<string, string[]>();
-                keywords.forEach(({ keyword, keyword_groups }) => {
+                keywords.forEach(({keyword, keyword_groups}) => {
                     const groupName = keyword_groups;
                     if (!grouped.has(groupName)) {
                         grouped.set(groupName, []);
@@ -62,7 +64,9 @@ const KeywordFilter: FC<KeywordFilterProps> = ({
 
     const deselectAllKeywords = (group: string) => {
         const groupKeywords = groupedKeywords.get(group) || [];
-        const newSelectedKeywords = selectedKeywords.filter((keyword) => !groupKeywords.includes(keyword));
+        const newSelectedKeywords = selectedKeywords.filter(
+            (keyword) => !groupKeywords.includes(keyword)
+        );
 
         setSelectedKeywords(newSelectedKeywords);
     };
@@ -72,12 +76,20 @@ const KeywordFilter: FC<KeywordFilterProps> = ({
         setFilterMode(newFilterMode);
     };
 
+    const handleSearchDebounced = debounce((query: string) => {
+        setSearchQuery(query);
+    }, 500);
+
+    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+        handleSearchDebounced(event.target.value);
+    };
+
     return (
         <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            exit={{opacity: 0}}
+            transition={{duration: 0.2}}
         >
             {!loading && (
                 <div className="flex p-2 flex-col gap-2">
@@ -92,17 +104,56 @@ const KeywordFilter: FC<KeywordFilterProps> = ({
                             {filterMode === "AND" ? "AND" : "OR"}
                         </button>
                     </div>
-                    {Array.from(groupedKeywords.entries()).map(([group, keywords]) => (
-                        <KeywordGroup
-                            key={group}
-                            group={group}
-                            keywords={keywords}
-                            selectedKeywords={selectedKeywords}
-                            toggleKeyword={toggleKeyword}
-                            selectAll={() => selectAllKeywords(group)}
-                            deselectAll={() => deselectAllKeywords(group)}
-                        />
-                    ))}
+
+                    {selectedKeywords.length > 0 && (
+                        <div className="mb-4">
+                            <h2 className="text-lg font-bold mb-2">Selected Keywords:</h2>
+                            <motion.div layout className="flex flex-wrap gap-2">
+                                {selectedKeywords.map((keyword) => (
+                                    <motion.span
+                                        layout
+                                        key={keyword}
+                                        initial={{opacity: 0, scale: 0.8}}
+                                        animate={{opacity: 1, scale: 1}}
+                                        exit={{opacity: 0, scale: 0.8}}
+                                        className="px-3 py-1 rounded-full bg-blue-500 text-white text-sm cursor-pointer"
+                                        onClick={() => toggleKeyword(keyword)}
+                                    >
+                                        {keyword} ×
+                                    </motion.span>
+                                ))}
+                            </motion.div>
+                        </div>
+                    )}
+
+                    <input
+                        type="text"
+                        className="p-2 hidden border border-gray-300 rounded-md"
+                        placeholder="Search keywords..."
+                        onChange={handleSearch}
+                    />
+
+                    {Array.from(groupedKeywords.entries()).map(([group, keywords]) => {
+                        // Filter keywords based on the search query and selected keywords
+                        const filteredKeywords = keywords.filter(
+                            (keyword) =>
+                                keyword.toLowerCase().includes(searchQuery.toLowerCase()) &&
+                                !selectedKeywords.includes(keyword)
+                        );
+
+                        // Render the group even if it has no selectable keywords
+                        return (
+                            <KeywordGroup
+                                key={group}
+                                group={group}
+                                keywords={filteredKeywords}
+                                selectedKeywords={selectedKeywords}
+                                toggleKeyword={toggleKeyword}
+                                selectAll={() => selectAllKeywords(group)}
+                                deselectAll={() => deselectAllKeywords(group)}
+                            />
+                        );
+                    })}
                 </div>
             )}
         </motion.div>

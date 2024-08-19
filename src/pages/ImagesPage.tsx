@@ -1,12 +1,12 @@
 import {useState, useEffect, useCallback} from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {Photo} from '../types/types';
-import {fetchImagesWithFilter} from "../utils/supabaseService.ts";
-import FilterComponent from "../components/Filter/FilterComponent.tsx";
+import FilterComponent from '../components/Filter/FilterComponent.tsx';
 import {AnimatePresence} from 'framer-motion';
-import RenderGalleryContent from "../components/Gallery/renderGalleryContent.tsx";
+import RenderGalleryContent from '../components/Gallery/renderGalleryContent.tsx';
 import debounce from 'lodash/debounce';
-import {AiOutlineLoading} from "react-icons/ai";
+import {AiOutlineLoading} from 'react-icons/ai';
+import {fetchPhotosWithFilter} from '../utils/supabaseService.ts';
 
 const ImagesPage = () => {
     const [showFilters, setShowFilters] = useState(false);
@@ -16,15 +16,16 @@ const ImagesPage = () => {
     const [hasMore, setHasMore] = useState(true);
     const [limit] = useState(30);
     const [loading, setLoading] = useState(true);
-    const [isLoadingMore, setIsLoadingMore] = useState(false)
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
 
     const location = useLocation();
     const navigate = useNavigate();
 
     // Fetch images with or without filters
-    const fetchImages = async () => {
+    const fetchImages = useCallback(async (newOffset = 0) => {
+        console.log('fetching images___');
         setError(null);
-        if (!loading) setIsLoadingMore(true);
+
         try {
             const query = new URLSearchParams(location.search);
             const keywords = query.get('keywords')?.split(';') || [];
@@ -32,15 +33,15 @@ const ImagesPage = () => {
 
             const filter = {
                 keywords: keywords,
-                KeywordFilterMode: KeywordFilterMode
+                KeywordFilterMode: KeywordFilterMode,
             };
 
-            const newPhotos = await fetchImagesWithFilter(filter, limit, offset);
+            const newPhotos = await fetchPhotosWithFilter(filter, limit, newOffset);
 
             if (newPhotos === null || newPhotos.length === 0) {
                 setHasMore(false); // No more images available
             } else {
-                setPhotos((prevPhotos) => [...prevPhotos, ...newPhotos]);
+                setPhotos((prevPhotos) => (newOffset === 0 ? newPhotos : [...prevPhotos, ...newPhotos]));
             }
         } catch (err) {
             setError((err as Error).message);
@@ -48,32 +49,33 @@ const ImagesPage = () => {
             setLoading(false);
             setIsLoadingMore(false);
         }
-    };
+    }, [location.search, limit]);
 
-    // Fetch images when offset or filters change
+    // Fetch images when filters change (resets state)
     useEffect(() => {
         setLoading(true);
         setOffset(0);
         setPhotos([]);
         setHasMore(true);
-        fetchImages();  // Call fetchImages here to load the new images
-    }, [location.search]);
+        fetchImages(0);  // Fetch images with reset offset
+    }, [location.search, fetchImages]);
 
+    // Handle offset changes for pagination
     useEffect(() => {
-        if (hasMore && !loading) {
-            fetchImages();
+        if (hasMore && offset > 0) {
+            fetchImages(offset);
         }
-    }, [offset, hasMore, loading]);
+    }, [offset, hasMore, fetchImages]);
 
-    // Handle scroll event to detect when user is at the bottom
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Handle scroll event to detect when user is close to the bottom
     const handleScroll = useCallback(debounce(() => {
         if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 300) {
-            if (hasMore) {
+            if (hasMore && !isLoadingMore) {
+                console.log('loading more');
                 setOffset((prevOffset) => prevOffset + limit); // Increment by limit
             }
         }
-    }, 200), [hasMore, limit]);
+    }, 200), [hasMore, limit, isLoadingMore]);
 
     useEffect(() => {
         window.addEventListener('scroll', handleScroll);
@@ -117,22 +119,20 @@ const ImagesPage = () => {
                 loading={loading}
                 photos={photos}
                 error={error}
-                header={"No photos found, try a different filter"}
-                text={""}
+                header="No photos found, try a different filter"
+                text=""
                 showAllImages={false}
             />
-            {!hasMore && (
-                <div className={"w-full p-20 text-center"}>
-                    <p className={"text-xl"}>No more images to show</p>
+            {!hasMore && photos.length > 1 && (
+                <div className="w-full mt-20 p-20 text-center">
+                    <p className="text-xl">No more images to show</p>
                 </div>
             )}
-            {
-                isLoadingMore && (
-                    <div className="w-full text-5xl flex items-center justify-center">
-                       <AiOutlineLoading className={"animate-spin"}/>
-                    </div>
-                )
-            }
+            {isLoadingMore && photos.length > 1 && (
+                <div className="w-full mt-20 text-5xl flex items-center justify-center">
+                    <AiOutlineLoading className="animate-spin"/>
+                </div>
+            )}
         </div>
     );
 };

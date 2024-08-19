@@ -16,15 +16,17 @@ const KeywordGroup: FC<KeywordGroupProps> = ({
                                                  selectedKeywords,
                                                  toggleKeyword,
                                                  selectAll,
-                                                 deselectAll
+                                                 deselectAll,
                                              }) => {
     const [isCollapsed, setIsCollapsed] = useState(true);
+    const [anySelected, setAnySelected] = useState(false);
 
     useEffect(() => {
-        // Initialize collapse state based on whether any keyword in the group is selected
-        const hasSelectedKeyword = keywords.some(keyword => selectedKeywords.includes(keyword));
-        setIsCollapsed(!hasSelectedKeyword);
-    }, [keywords, selectedKeywords]); // Update when keywords or selectedKeywords change
+        const hasSelectedKeyword = keywords.some((keyword) =>
+            selectedKeywords.includes(keyword)
+        );
+        setAnySelected(hasSelectedKeyword);
+    }, [keywords, selectedKeywords]);
 
     const toggleCollapse = () => {
         setIsCollapsed(!isCollapsed);
@@ -53,33 +55,43 @@ const KeywordGroup: FC<KeywordGroupProps> = ({
                 <div className="flex flex-col md:gap-2 gap-4 mt-2">
                     <div className="flex justify-start gap-2 mb-2">
                         <button
-                            className="px-3 py-1 rounded-full bg-blue-500 text-white text-sm"
+                            className="px-3 py-1 hidden rounded-full bg-green-500 text-white text-sm"
                             onClick={selectAll}
                         >
                             Select All
                         </button>
-                        <button
-                            className="px-3 py-1 rounded-full bg-red-500 text-white text-sm"
-                            onClick={deselectAll}
-                        >
-                            Deselect All
-                        </button>
-                    </div>
-                    <div className="flex flex-wrap md:gap-2 gap-4">
-                        {keywords.map((keyword) => (
+                        {anySelected && (
                             <button
-                                key={keyword}
-                                className={`px-3 py-1 rounded-full text-sm cursor-pointer ${
-                                    selectedKeywords.includes(keyword)
-                                        ? "bg-blue-500 text-white hover:line-through"
-                                        : "bg-gray-200 text-gray-800 hover:bg-blue-600 hover:text-white"
-                                }`}
-                                onClick={() => toggleKeyword(keyword)}
+                                className="px-3 hidden py-1 rounded-full bg-red-500 text-white text-sm"
+                                onClick={deselectAll}
                             >
-                                {keyword}
+                                Deselect All
                             </button>
-                        ))}
+                        )}
                     </div>
+                    <motion.div layout className="flex flex-wrap md:gap-2 gap-4">
+                        {keywords.length === 0 ? (
+                            <div className="text-gray-500">No selectable keywords</div>
+                        ) : (
+                            keywords.map((keyword) => (
+                                <motion.button
+                                    layout
+                                    key={keyword}
+                                    className={`px-3 py-1 rounded-full text-sm cursor-pointer ${
+                                        selectedKeywords.includes(keyword)
+                                            ? "bg-blue-500 text-white hover:line-through"
+                                            : "bg-gray-200 text-gray-800 hover:bg-blue-600 hover:text-white"
+                                    }`}
+                                    onClick={() => toggleKeyword(keyword)}
+                                    initial={{opacity: 0, scale: 0.8}}
+                                    animate={{opacity: 1, scale: 1}}
+                                    exit={{opacity: 0, scale: 0.8}}
+                                >
+                                    {keyword}
+                                </motion.button>
+                            ))
+                        )}
+                    </motion.div>
                 </div>
             </motion.div>
         </div>
