@@ -63,13 +63,14 @@ const ImagesPage = () => {
     // Handle offset changes for pagination
     useEffect(() => {
         if (hasMore && offset > 0) {
+            setIsLoadingMore(true);  // Set loading more to true when fetching more images
             fetchImages(offset);
         }
     }, [offset, hasMore, fetchImages]);
 
     // Handle scroll event to detect when user is close to the bottom
     const handleScroll = useCallback(debounce(() => {
-        if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 300) {
+        if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 900) {
             if (hasMore && !isLoadingMore) {
                 console.log('loading more');
                 setOffset((prevOffset) => prevOffset + limit); // Increment by limit
@@ -128,9 +129,10 @@ const ImagesPage = () => {
                     <p className="text-xl">No more images to show</p>
                 </div>
             )}
-            {isLoadingMore && photos.length > 1 && (
-                <div className="w-full mt-20 text-5xl flex items-center justify-center">
-                    <AiOutlineLoading className="animate-spin"/>
+            {/* Loading More Animation */}
+            {isLoadingMore && hasMore && (
+                <div className="w-full border-gray-50 flex pb-20 justify-center items-center my-8">
+                    <AiOutlineLoading className="animate-spin text-5xl text-white" />
                 </div>
             )}
         </div>
