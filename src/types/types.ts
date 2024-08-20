@@ -29,3 +29,11 @@ export interface KeywordWithGroup {
     keyword: string;
     keyword_groups: string;
 }
+
+export interface Album {
+    album_id: number;
+    title: string;
+    description: string;
+    cover_photo: Photo;
+    photos: Photo[] | [];
+}
