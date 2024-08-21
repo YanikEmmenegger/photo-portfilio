@@ -1,8 +1,10 @@
 import {FC, useEffect, useState} from "react";
-import {fetchAllKeywords} from "../../utils/supabaseService.ts";
-import KeywordGroup from "./KeywordGroup.tsx";
+import {fetchAllKeywords} from "../../utils/supabaseService";
+import KeywordGroup from "./KeywordGroup";
+import FilterModeSwitch from "./FilterModeSwitch";
 import {motion} from "framer-motion";
 import {debounce} from "lodash";
+import Keyword from "./Keyword.tsx";
 
 interface KeywordFilterProps {
     selectedKeywords: string[];
@@ -25,8 +27,8 @@ const KeywordFilter: FC<KeywordFilterProps> = ({
         const fetchKeywords = async () => {
             try {
                 const keywords = await fetchAllKeywords();
-
                 const grouped = new Map<string, string[]>();
+
                 keywords.forEach(({keyword, keyword_groups}) => {
                     const groupName = keyword_groups;
                     if (!grouped.has(groupName)) {
@@ -71,11 +73,6 @@ const KeywordFilter: FC<KeywordFilterProps> = ({
         setSelectedKeywords(newSelectedKeywords);
     };
 
-    const toggleFilterMode = () => {
-        const newFilterMode = filterMode === "AND" ? "OR" : "AND";
-        setFilterMode(newFilterMode);
-    };
-
     const handleSearchDebounced = debounce((query: string) => {
         setSearchQuery(query);
     }, 500);
@@ -92,39 +89,21 @@ const KeywordFilter: FC<KeywordFilterProps> = ({
             transition={{duration: 0.2}}
         >
             {!loading && (
-                <div className="flex p-2 flex-col gap-2">
-                    <div className="flex gap-2 items-center">
-                        <h1 className="text-xl md:text-4xl">Filter by Keywords:</h1>
-                        <button
-                            className={`md:px-4 md:py-2 px-2 py-1 rounded-full text-sm font-bold ${
-                                filterMode === "AND" ? "bg-green-500 text-white" : "bg-blue-500 text-white"
-                            }`}
-                            onClick={toggleFilterMode}
-                        >
-                            {filterMode === "AND" ? "AND" : "OR"}
-                        </button>
+                <div className="flex flex-col gap-4">
+                    <div className="flex-col gap-2 items-center">
+                        <h1 className="text-xl md:text-2xl">Filter by Keywords:</h1>
+                        <FilterModeSwitch
+                            filterMode={filterMode}
+                            toggleFilterMode={() => setFilterMode(filterMode === "AND" ? "OR" : "AND")}
+                        />
                     </div>
 
-                    {selectedKeywords.length > 0 && (
-                        <div className="mb-4">
-                            <h2 className="text-lg font-bold mb-2">Selected Keywords:</h2>
-                            <motion.div layout className="flex flex-wrap gap-2">
-                                {selectedKeywords.map((keyword) => (
-                                    <motion.span
-                                        layout
-                                        key={keyword}
-                                        initial={{opacity: 0, scale: 0.8}}
-                                        animate={{opacity: 1, scale: 1}}
-                                        exit={{opacity: 0, scale: 0.8}}
-                                        className="px-3 py-1 rounded-full bg-blue-500 text-white text-sm cursor-pointer"
-                                        onClick={() => toggleKeyword(keyword)}
-                                    >
-                                        {keyword} ×
-                                    </motion.span>
-                                ))}
-                            </motion.div>
-                        </div>
-                    )}
+                    <div className="flex flex-wrap gap-2">
+                        {selectedKeywords.map((keyword) => (
+                            <Keyword name={keyword} isSelected={true} onClick={() => toggleKeyword(keyword)}
+                                     key={keyword}/>
+                        ))}
+                    </div>
 
                     <input
                         type="text"
@@ -134,14 +113,12 @@ const KeywordFilter: FC<KeywordFilterProps> = ({
                     />
 
                     {Array.from(groupedKeywords.entries()).map(([group, keywords]) => {
-                        // Filter keywords based on the search query and selected keywords
                         const filteredKeywords = keywords.filter(
                             (keyword) =>
                                 keyword.toLowerCase().includes(searchQuery.toLowerCase()) &&
                                 !selectedKeywords.includes(keyword)
                         );
 
-                        // Render the group even if it has no selectable keywords
                         return (
                             <KeywordGroup
                                 key={group}

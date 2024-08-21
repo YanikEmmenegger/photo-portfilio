@@ -1,5 +1,8 @@
-import {FC, useState, useEffect} from "react";
-import {motion} from "framer-motion";
+import { FC, useState } from "react";
+import { motion } from "framer-motion";
+import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/16/solid";
+import { twMerge } from "tailwind-merge";
+import Keyword from "./Keyword"; // Adjust import path if necessary
 
 interface KeywordGroupProps {
     group: string;
@@ -18,77 +21,81 @@ const KeywordGroup: FC<KeywordGroupProps> = ({
                                                  selectAll,
                                                  deselectAll,
                                              }) => {
-    const [isCollapsed, setIsCollapsed] = useState(true);
-    const [anySelected, setAnySelected] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
 
-    useEffect(() => {
-        const hasSelectedKeyword = keywords.some((keyword) =>
-            selectedKeywords.includes(keyword)
-        );
-        setAnySelected(hasSelectedKeyword);
-    }, [keywords, selectedKeywords]);
-
-    const toggleCollapse = () => {
-        setIsCollapsed(!isCollapsed);
+    const handleToggle = () => {
+        setIsOpen(!isOpen);
     };
 
     return (
-        <div className="rounded-lg py-2">
+        <div className="rounded-lg">
             <div
-                className="flex gap-2 items-center cursor-pointer text-white font-semibold"
-                onClick={toggleCollapse}
+                className="flex justify-between items-center w-full px-4 py-2 text-lg font-semibold text-left text-white bg-neutral-900 rounded-lg hover:bg-neutral-800 cursor-pointer"
+                onClick={handleToggle}
             >
-                <span className="text-xl md:text-2xl">{group}</span>
-                <motion.span
-                    animate={{rotate: isCollapsed ? -90 : 0}}
-                    transition={{duration: 0.3}}
-                >
-                    ▼
-                </motion.span>
+                <span>{group}</span>
+                <span className="flex items-center">
+                    {isOpen ? (
+                        <ChevronUpIcon className="w-5 h-5" />
+                    ) : (
+                        <ChevronDownIcon className="w-5 h-5" />
+                    )}
+                </span>
             </div>
+
             <motion.div
-                initial={{height: 0, opacity: 0}}
-                animate={{height: isCollapsed ? 0 : "auto", opacity: isCollapsed ? 0 : 1}}
-                transition={{duration: 0.3}}
-                className="overflow-hidden"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: isOpen ? 1 : 0, height: isOpen ? "auto" : 0 }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="overflow-hidden px-4 pt-4 pb-2 text-sm text-gray-300"
             >
-                <div className="flex flex-col md:gap-2 gap-4 mt-2">
+                <div className="flex flex-col md:gap-2 gap-2 mt-2">
                     <div className="flex justify-start gap-2 mb-2">
                         <button
-                            className="px-3 py-1 hidden rounded-full bg-green-500 text-white text-sm"
-                            onClick={selectAll}
+                            className={twMerge(
+                                "px-3 py-1 rounded-full bg-green-500 text-white text-sm",
+                                keywords.length === 0 && "hidden"
+                            )}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                selectAll();
+                            }}
                         >
                             Select All
                         </button>
-                        {anySelected && (
-                            <button
-                                className="px-3 hidden py-1 rounded-full bg-red-500 text-white text-sm"
-                                onClick={deselectAll}
-                            >
-                                Deselect All
-                            </button>
-                        )}
+                        <button
+                            className={twMerge(
+                                "px-3 py-1 rounded-full hidden bg-red-500 text-white text-sm",
+                                selectedKeywords.length >= 1 && "block"
+                            )}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                deselectAll();
+                            }}
+                        >
+                            Deselect All
+                        </button>
                     </div>
-                    <motion.div layout className="flex flex-wrap md:gap-2 gap-4">
+                    <motion.div
+                        className="flex flex-wrap md:gap-2 gap-4"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                    >
                         {keywords.length === 0 ? (
-                            <div className="text-gray-500">No selectable keywords</div>
+                            <div className="text-gray-500">
+                                No selectable keywords
+                            </div>
                         ) : (
                             keywords.map((keyword) => (
-                                <motion.button
-                                    layout
+                                <Keyword
                                     key={keyword}
-                                    className={`px-3 py-1 rounded-full text-sm cursor-pointer ${
-                                        selectedKeywords.includes(keyword)
-                                            ? "bg-blue-500 text-white hover:line-through"
-                                            : "bg-gray-200 text-gray-800 hover:bg-blue-600 hover:text-white"
-                                    }`}
+                                    name={keyword}
+                                    isSelected={selectedKeywords.includes(keyword)}
                                     onClick={() => toggleKeyword(keyword)}
-                                    initial={{opacity: 0, scale: 0.8}}
-                                    animate={{opacity: 1, scale: 1}}
-                                    exit={{opacity: 0, scale: 0.8}}
-                                >
-                                    {keyword}
-                                </motion.button>
+                                />
                             ))
                         )}
                     </motion.div>
