@@ -44,7 +44,7 @@ const ImageOverlay: FC<ImageOverlayProps> = ({photo, openLightbox}) => {
 
             <div className="p-5 grow cursor-pointer" onClick={openLightbox}>
                 <h1 className="text-sm w-max font-bold">{photo.title}</h1>
-                <h2 className="text-xs line-clamp-4">{photo.description}</h2>
+                <h2 className="text-xs line-clamp-2 lg:line-clamp-4">{photo.description}</h2>
             </div>
             <div className="flex items-center justify-between px-5 pb-3 py-1">
                 <div onClick={openLightbox} className="text-xs gap-2 flex-1 tr uncate">

@@ -1,6 +1,6 @@
 import {useState, useEffect, useCallback} from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
-import {Photo} from '../types/types';
+import {FetchPhotosFilter, Photo, SortType} from '../types/types';
 import FilterComponent from '../components/Filter/FilterComponent.tsx';
 import {AnimatePresence} from 'framer-motion';
 import RenderGalleryContent from '../components/Gallery/renderGalleryContent.tsx';
@@ -22,22 +22,58 @@ const ImagesPage = () => {
     const navigate = useNavigate();
 
     // Fetch images with or without filters
-    const fetchImages = useCallback(async (newOffset = 0) => {
-        console.log('fetching images___');
-        setError(null);
+    /* const fetchImages = useCallback(async (newOffset = 0) => {
+         setError(null);
 
+         try {
+             const query = new URLSearchParams(location.search);
+             const keywords = query.get('keywords')?.split(';') || [];
+             const KeywordFilterMode = query.get('KeywordFilterMode') === 'AND' ? 'AND' : 'OR';
+             const sort = query.get('sort') || 'Newest'; // Default to 'Newest'
+
+             const filter = {
+                 keywords: keywords,
+                 KeywordFilterMode: KeywordFilterMode,
+                 sort: sort,
+             };
+
+             const newPhotos = await fetchPhotosWithFilter(filter, limit, newOffset);
+
+             if (newPhotos === null || newPhotos.length === 0) {
+                 setHasMore(false); // No more images available
+             } else {
+                 setPhotos((prevPhotos) => (newOffset === 0 ? newPhotos : [...prevPhotos, ...newPhotos]));
+             }
+         } catch (err) {
+             setError((err as Error).message);
+         } finally {
+             setLoading(false);
+             setIsLoadingMore(false);
+         }
+     }, [location.search, limit]);*/
+
+
+    const fetchImages = useCallback(async (newOffset = 0) => {
+        setError(null);
         try {
             const query = new URLSearchParams(location.search);
+
             const keywords = query.get('keywords')?.split(';') || [];
             const KeywordFilterMode = query.get('KeywordFilterMode') === 'AND' ? 'AND' : 'OR';
 
-            const filter = {
+
+
+            const sort:SortType = query.get('sort') as SortType || 'Newest';
+
+            const filter:FetchPhotosFilter = {
                 keywords: keywords,
                 KeywordFilterMode: KeywordFilterMode,
-            };
+                sort: sort,
+                limit: limit,
+                offset: newOffset
+            }
 
-            const newPhotos = await fetchPhotosWithFilter(filter, limit, newOffset);
-
+            const newPhotos = await fetchPhotosWithFilter( filter );
             if (newPhotos === null || newPhotos.length === 0) {
                 setHasMore(false); // No more images available
             } else {
@@ -49,6 +85,7 @@ const ImagesPage = () => {
             setLoading(false);
             setIsLoadingMore(false);
         }
+
     }, [location.search, limit]);
 
     // Fetch images when filters change (resets state)
@@ -132,7 +169,7 @@ const ImagesPage = () => {
             {/* Loading More Animation */}
             {isLoadingMore && hasMore && (
                 <div className="w-full border-gray-50 flex pb-20 justify-center items-center my-8">
-                    <AiOutlineLoading className="animate-spin text-5xl text-white" />
+                    <AiOutlineLoading className="animate-spin text-5xl text-white"/>
                 </div>
             )}
         </div>

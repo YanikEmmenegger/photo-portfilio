@@ -37,3 +37,20 @@ export interface Album {
     cover_photo: Photo;
     photos: Photo[] | [];
 }
+
+// Define the `FilterType` as a union of string literals
+export type FilterType = 'by_id' | 'background' | 'keywords_or' | 'keywords_and' | 'all';
+export type SortType = 'Newest' | 'Oldest' | 'Random';
+export type KeywordFilterModeType = 'AND' | 'OR';
+
+// Define the `FetchPhotosFilter` interface using the corrected `FilterType`
+export interface FetchPhotosFilter {
+    keywords?: string[],
+    filterType?: FilterType,
+    KeywordFilterMode?: KeywordFilterModeType,
+    photoIds?: number[],
+    limit?: number,
+    offset?: number,
+    sort?: SortType
+}
+

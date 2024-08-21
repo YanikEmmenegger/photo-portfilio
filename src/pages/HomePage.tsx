@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import {useImageContext} from '../contexts/BackgroundImageContext.tsx';
 import {motion, AnimatePresence} from 'framer-motion';
 import {Link} from "react-router-dom";
-import {fetchRandomBackgroundPhotos} from "../utils/supabaseService.ts";
+import {fetchPhotosWithFilter} from "../utils/supabaseService.ts";
 
 const HomePage = () => {
     const BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
@@ -16,10 +16,15 @@ const HomePage = () => {
         }
 
         const loadImages = async () => {
-            const fetchedImages = await fetchRandomBackgroundPhotos(50); // Number of images to retrieve
-            if (fetchedImages) {
-                setImages(fetchedImages);
+            const newPhotos = await fetchPhotosWithFilter({filterType: "background"}) // Number of images to retrieve
+            if (newPhotos === null || newPhotos.length === 0) {
+                setImages([]);
+            } else {
+                setImages(newPhotos);
+
             }
+
+
             setLoading(false);
         };
 
@@ -90,7 +95,8 @@ const HomePage = () => {
                                     currentImage.keywords.map((keyword, index) => (
                                         <span key={index}>
                                             {index > 0 && ', '}
-                                            <Link className={"hover:underline"} to={`/images/?keywords=${keyword}`}>{keyword}</Link>
+                                            <Link className={"hover:underline"}
+                                                  to={`/images/?keywords=${keyword}`}>{keyword}</Link>
                                         </span>
                                     ))
                                 }

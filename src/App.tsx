@@ -10,6 +10,7 @@ import {UserProvider} from "./contexts/UserContext.tsx";
 import FavoritePage from "./pages/FavoritePage.tsx";
 import {Toaster} from "react-hot-toast";
 import World from "./pages/World.tsx";
+import BackToTop from "./components/BackToTop.tsx";
 
 const App = () => {
     return (
@@ -29,6 +30,7 @@ const App = () => {
                 </Router>
             </BackgroundImageProvider>
             <Toaster/>
+            <BackToTop/>
         </UserProvider>
     );
 };

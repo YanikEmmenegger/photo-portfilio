@@ -1,15 +1,17 @@
-import { FC, useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import {FC, useEffect, useState} from "react";
+import {useLocation, useNavigate} from "react-router-dom";
 import KeywordFilter from "./KeywordFilter";
-import { motion } from "framer-motion";
+import {motion} from "framer-motion";
+import SortComponent from "./SortComponent.tsx";
 
 interface FilterComponentProps {
     onClose: () => void;
 }
 
-const FilterComponent: FC<FilterComponentProps> = ({ onClose }) => {
+const FilterComponent: FC<FilterComponentProps> = ({onClose}) => {
     const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
     const [filterMode, setFilterMode] = useState<"AND" | "OR">("OR");
+    const [sortMode, setSortMode] = useState<"Newest" | "Oldest" | "Random">("Newest");
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -17,9 +19,17 @@ const FilterComponent: FC<FilterComponentProps> = ({ onClose }) => {
         const query = new URLSearchParams(location.search);
         const keywordsFromQuery = query.get("keywords")?.split(";") || [];
         const filterModeFromQuery = query.get("KeywordFilterMode") === "AND" ? "AND" : "OR";
+        const sortModeFromQuery = query.get("sort") || "Newest";
 
         setSelectedKeywords(keywordsFromQuery);
         setFilterMode(filterModeFromQuery || "OR");
+
+        const validSortModes = ["Newest", "Oldest", "Random"];
+        if (validSortModes.includes(sortModeFromQuery)) {
+            setSortMode(sortModeFromQuery as "Newest" | "Oldest" | "Random");
+        } else {
+            setSortMode("Newest");
+        }
     }, [location.search]);
 
     const applyFilters = () => {
@@ -28,8 +38,9 @@ const FilterComponent: FC<FilterComponentProps> = ({ onClose }) => {
             query.set("keywords", selectedKeywords.join(";"));
         }
         query.set("KeywordFilterMode", filterMode);
+        query.set("sort", sortMode); // Ensure sortMode is set in the query parameters
 
-        navigate({ search: query.toString() }, { replace: true });
+        navigate({search: query.toString()}, {replace: true});
         onClose(); // Close the filter component after applying
     };
 
@@ -40,23 +51,28 @@ const FilterComponent: FC<FilterComponentProps> = ({ onClose }) => {
     const clearFilters = () => {
         setSelectedKeywords([]);
         setFilterMode("OR");
-    }
+        setSortMode("Newest"); // Reset to default sort mode
+    };
 
     return (
         <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.1 }}
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            exit={{opacity: 0}}
+            transition={{duration: 0.1}}
             className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-75 z-50"
         >
             <motion.div
-                initial={{ opacity: 0, y: -50 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -50 }}
-                transition={{ duration: 0.2 }}
-                className="p-10 w-full h-full md:h-auto max-w-3xl bg-black rounded-2xl flex flex-col justify-between overflow-y-auto"
+                initial={{opacity: 0, y: -50}}
+                animate={{opacity: 1, y: 0}}
+                exit={{opacity: 0, y: -50}}
+                transition={{duration: 0.2}}
+                className="p-10 w-full h-full md:h-[80%] md:h -auto max-w-3xl bg-black rounded-2xl flex flex-col justify-between overflow-y-auto"
             >
+                <SortComponent
+                    sortMode={sortMode}
+                    onSortModeChange={(newSortMode) => setSortMode(newSortMode)}
+                />
                 <KeywordFilter
                     selectedKeywords={selectedKeywords}
                     setSelectedKeywords={setSelectedKeywords}
