@@ -9,6 +9,7 @@ interface PhotoProps {
 }
 
 const PhotoElement: FC<PhotoProps> = ({photo, isVisible, openLightbox}) => {
+
     const BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL.endsWith('/')
         ? import.meta.env.VITE_IMAGE_BASE_URL
         : `${import.meta.env.VITE_IMAGE_BASE_URL}/`;

@@ -8,6 +8,8 @@ interface UserContextType {
     fetchLikedImages: () => void;
     addLikedImage: (photoId: number) => Promise<boolean>;
     removeLikedImage: (photoId: number) => Promise<boolean>;
+    lightboxInstructions: boolean; // Add this field to the context
+    setLightboxInstructions: (value: boolean) => void; // Add this function to the context
 }
 
 // Create a context with default values
@@ -17,6 +19,22 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const [userId, setUserId] = useState<string | null>(null);
     const [likedImageIDs, setLikedImageIDs] = useState<number[]>([]);
+    const [lightboxInstructions, setLightboxInstructions] = useState<boolean>(false);
+
+    useEffect(() => {
+        // Check localStorage for lightboxInstructions
+        const instructionsShown = localStorage.getItem('lightboxInstructions');
+        if (instructionsShown === 'true') {
+            setLightboxInstructions(true);
+        } else {
+            setLightboxInstructions(false);
+        }
+    }, []);
+
+    const handleSetLightboxInstructions = (value: boolean) => {
+        setLightboxInstructions(value);
+        localStorage.setItem('lightboxInstructions', value.toString());
+    };
 
     // Fetch liked images from the database
     const fetchLikedImages = async () => {
@@ -117,17 +135,24 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
         if (userId) {
             fetchLikedImages();
         }
-    }, [ userId]);
+    }, [userId]);
 
     return (
-        <UserContext.Provider value={{userId, likedImageIDs, fetchLikedImages, addLikedImage, removeLikedImage}}>
+        <UserContext.Provider value={{
+            userId,
+            likedImageIDs,
+            fetchLikedImages,
+            addLikedImage,
+            removeLikedImage,
+            lightboxInstructions,
+            setLightboxInstructions: handleSetLightboxInstructions
+        }}>
             {children}
         </UserContext.Provider>
     );
 };
 
 // Create a custom hook for using the context
-// eslint-disable-next-line react-refresh/only-export-components
 export const useUser = (): UserContextType => {
     const context = useContext(UserContext);
     if (context === undefined) {

@@ -62,45 +62,48 @@ const FilterComponent: FC<FilterComponentProps> = ({onClose}) => {
             transition={{duration: 0.1}}
             className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-75 z-50"
         >
+
             <motion.div
                 initial={{opacity: 0, y: -50}}
                 animate={{opacity: 1, y: 0}}
                 exit={{opacity: 0, y: -50}}
                 transition={{duration: 0.2}}
-                className="p-10 w-full h-full md:h-[80%] md:h -auto max-w-3xl bg-black rounded-2xl flex flex-col justify-between overflow-y-auto"
-            >
-                <SortComponent
-                    sortMode={sortMode}
-                    onSortModeChange={(newSortMode) => setSortMode(newSortMode)}
-                />
+                className="p-10 w-full h-full md:h-[80%] md:h -auto max-w-3xl bg-black rounded-2xl flex flex-col justify-between overflow-y-auto">
+                <div className="flex justify-between">
+                    <SortComponent
+                        sortMode={sortMode}
+                        onSortModeChange={(newSortMode) => setSortMode(newSortMode)}
+                    />
+                    <div className={"flex justify-between gap-2"}>
+                        <button
+                            className="px-4 py-2 rounded-full text-sm font-bold bg-blue-500 text-white"
+                            onClick={applyFilters}
+                        >
+                            Apply Filter
+                        </button>
+                        <button
+                            className="px-4 py-2 rounded-full text-sm font-bold bg-red-500 text-white"
+                            onClick={cancelFilters}
+                        >
+                            Cancel
+                        </button>
+                        {selectedKeywords.length > 0 && (
+                            <button
+                                className="px-4 py-2 rounded-full text-sm font-bold bg-gray-500 text-white"
+                                onClick={clearFilters}
+                            >
+                                Clear Filters
+                            </button>
+                        )}
+                    </div>
+                </div>
+
                 <KeywordFilter
                     selectedKeywords={selectedKeywords}
                     setSelectedKeywords={setSelectedKeywords}
                     filterMode={filterMode}
                     setFilterMode={setFilterMode}
                 />
-                <div className="flex justify-end pb-20 md:pb-2 gap-2 mt-4">
-                    <button
-                        className="px-4 py-2 rounded-full text-sm font-bold bg-blue-500 text-white"
-                        onClick={applyFilters}
-                    >
-                        Apply Filter
-                    </button>
-                    <button
-                        className="px-4 py-2 rounded-full text-sm font-bold bg-red-500 text-white"
-                        onClick={cancelFilters}
-                    >
-                        Cancel
-                    </button>
-                    {selectedKeywords.length > 0 && (
-                        <button
-                            className="px-4 py-2 rounded-full text-sm font-bold bg-gray-500 text-white"
-                            onClick={clearFilters}
-                        >
-                            Clear Filters
-                        </button>
-                    )}
-                </div>
             </motion.div>
         </motion.div>
     );

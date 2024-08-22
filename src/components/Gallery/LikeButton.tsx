@@ -6,13 +6,14 @@ interface LikeButtonProps {
     isLiked: boolean;
     onclick: () => void;
     loading?: boolean;
+    likes: number;
 }
 
-const LikeButton: FC<LikeButtonProps> = ({isLiked, onclick, loading}) => {
+const LikeButton: FC<LikeButtonProps> = ({isLiked, onclick, loading, likes}) => {
     return (
         <div
             onClick={loading ? undefined : onclick} // Disable click when loading
-            className="relative px-5 py-1  cursor-pointer flex items-center justify-center"
+            className="grow cursor-pointer flex items-center justify-end"
             style={{width: 24, height: 24}} // Ensure the button has a fixed size
         >
             {loading ? (
@@ -35,9 +36,14 @@ const LikeButton: FC<LikeButtonProps> = ({isLiked, onclick, loading}) => {
                             animate={{opacity: 1, scale: 1}}
                             exit={{opacity: 0, scale: 0.8}}
                             transition={{duration: 0.25, ease: "easeInOut"}}
-                            className="absolute flex items-center justify-center"
+                            className="absolute gap-1 flex items-center justify-center"
                         >
-                            <AiFillHeart className="text-red-500" size={24}/>
+
+                            <p>
+                                {likes }
+                            </p>
+                            <AiFillHeart className="text-red-500 float-right" size={24}/>
+
                         </motion.div>
                     ) : (
                         <motion.div
@@ -46,9 +52,13 @@ const LikeButton: FC<LikeButtonProps> = ({isLiked, onclick, loading}) => {
                             animate={{opacity: 1, scale: 1}}
                             exit={{opacity: 0, scale: 0.8}}
                             transition={{duration: 0.25, ease: "easeInOut"}}
-                            className="absolute flex items-center justify-center"
+                            className="absolute gap-1 flex items-center justify-center"
                         >
+                            <p>
+                                {likes > 0 ? likes : ""}
+                            </p>
                             <AiOutlineHeart size={24}/>
+
                         </motion.div>
                     )}
                 </AnimatePresence>

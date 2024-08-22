@@ -11,6 +11,7 @@ import FavoritePage from "./pages/FavoritePage.tsx";
 import {Toaster} from "react-hot-toast";
 import World from "./pages/World.tsx";
 import BackToTop from "./components/BackToTop.tsx";
+import AboutPage from "./pages/AboutPage.tsx";
 
 const App = () => {
     return (
@@ -23,6 +24,7 @@ const App = () => {
                         <Route path="/contact" element={<ContactPage/>}/>
                         <Route path="/images" element={<ImagesPage/>}/>
                         <Route path="/albums" element={<AlbumPage/>}/>
+                        <Route path="/about" element={<AboutPage/>}/>
                         <Route path={"/favorites"} element={<FavoritePage/>}/>
                         <Route path="/albums/:albumId" element={<AlbumDetailPage/>}/>
                         <Route path={"world"} element={<World/>}/>

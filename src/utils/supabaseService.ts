@@ -8,7 +8,6 @@ import {transformToKeywordWithGroup, transformToPhoto} from './transformToTypes'
  * @param filter
  */
 
-
 export const fetchPhotosWithFilter = async (filter: FetchPhotosFilter): Promise<Photo[] | null> => {
 
     //if no filtertype is provided check if there are keywords or photoids if none, set filtertype to all
@@ -25,27 +24,28 @@ export const fetchPhotosWithFilter = async (filter: FetchPhotosFilter): Promise<
     const limit = filter.limit || 30;
     const offset = filter.offset || 0;
 
-    const sort = filter.sort === "Newest" ?"desc" : "asc";
+    const sort = filter.sort === "Newest" ? "desc" : "asc";
 
     const photoIds = filter.photoIds || [];
     const keywords = filter.keywords || [];
-
-    const {data, error} = await supabase.rpc('get_photos', {
-        filter_type: filterType,
-        keywords: keywords,
-        photo_ids: photoIds,
-        limit_count: limit,
-        offset_count: offset,
-        sort_order: sort
-    });
-
-
-    if (error) {
-        console.error('Error fetching photos with filter:', error);
+    try {
+        const {data, error} = await supabase.rpc('get_photos', {
+            filter_type: filterType,
+            keywords: keywords,
+            photo_ids: photoIds,
+            limit_count: limit,
+            offset_count: offset,
+            sort_order: sort
+        });
+        if (error) {
+            console.error('Error fetching photos with filter:', error);
+            return null;
+        }
+        return data ? data.map(transformToPhoto) : [];
+    } catch (err) {
+        console.error('Error fetching photos with filter:', err);
         return null;
     }
-    return data ? data.map(transformToPhoto) : [];
-
 };
 
 /**
@@ -58,7 +58,10 @@ export const fetchAllKeywords = async (): Promise<KeywordWithGroup[]> => {
             .from('keywords')
             .select('keyword, keyword_groups (group)');
 
-        if (error) throw new Error(error.message);
+        if (error) {
+            console.error('Error fetching photos with filter:', error);
+            return [];
+        }
 
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error

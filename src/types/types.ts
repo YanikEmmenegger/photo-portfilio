@@ -9,6 +9,8 @@ export interface Photo {
     description: string;
     keywords: string[];
     title: string;
+    likes?: number;
+    captureDate: string;
 }
 
 export interface PhotoSize {

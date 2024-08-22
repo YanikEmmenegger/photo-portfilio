@@ -3,6 +3,7 @@ import {useImageContext} from '../contexts/BackgroundImageContext.tsx';
 import {motion, AnimatePresence} from 'framer-motion';
 import {Link} from "react-router-dom";
 import {fetchPhotosWithFilter} from "../utils/supabaseService.ts";
+import {TextEffect} from "../components/effects/TextEffect.tsx";
 
 const HomePage = () => {
     const BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
@@ -79,9 +80,13 @@ const HomePage = () => {
                                 initial={{opacity: 0}}
                                 animate={{opacity: 1}}
                                 exit={{opacity: 0}}
-                                transition={{duration: 1, ease: "easeInOut"}}
+                                transition={{duration: 0.1, ease: "easeInOut"}}
                             >
-                                {currentImage.title}
+
+                                <TextEffect per={"char"} preset='blur'>
+                                    {currentImage.title}
+                                </TextEffect>
+                                {/*{currentImage.title}*/}
                             </motion.h1>
 
                             <motion.h2
@@ -91,12 +96,16 @@ const HomePage = () => {
                                 exit={{opacity: 0}}
                                 transition={{duration: 1, ease: "easeInOut"}}
                             >
+
                                 {
                                     currentImage.keywords.map((keyword, index) => (
-                                        <span key={index}>
-                                            {index > 0 && ', '}
+                                        <span className={""} key={index}>
                                             <Link className={"hover:underline"}
-                                                  to={`/images/?keywords=${keyword}`}>{keyword}</Link>
+                                                  to={`/images/?keywords=${keyword}`}>
+                                             <TextEffect per={"char"} className={"float-left border-b-2 border-transparent hover:border-white"} preset='blur'>
+                                                {keyword+ ", "}
+                                            </TextEffect>
+                                            </Link>
                                         </span>
                                     ))
                                 }

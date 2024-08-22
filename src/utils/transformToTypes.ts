@@ -13,6 +13,8 @@ export const transformToPhoto = (item: {
     description: string;
     keyword_list: string[];
     title: string;
+    like_count: number;
+    capture_date: string;
 }): Photo => ({
     photo_id: item.photo_id,
     filename: item.filename,
@@ -28,6 +30,8 @@ export const transformToPhoto = (item: {
     description: item.description,
     keywords: item.keyword_list,
     title: item.title,
+    likes: item.like_count || 0,
+    captureDate: item.capture_date,
 });
 
 

@@ -1,5 +1,5 @@
 import {Link, useLocation} from 'react-router-dom';
-import  {useState, useEffect} from 'react';
+import {useState, useEffect} from 'react';
 import {motion, useAnimation} from 'framer-motion';
 import NavItem from './NavItem';
 import {BiHeart} from 'react-icons/bi';
@@ -41,6 +41,7 @@ const Navigation = () => {
         {name: <BiHeart/>, href: "/favorites"},
         {name: "Images", href: "/images"},
         {name: "Albums", href: "/albums", dropDownOptions: []},
+        {name: "About", href: "/about", dropDownOptions: []},
         {name: "Contact", href: "/contact"},
     ];
 
@@ -53,7 +54,7 @@ const Navigation = () => {
 
     return (
         <nav
-            className={twMerge("w-full py-4 px-10 flex flex-col md:flex-row items-center justify-between bg-black", location.pathname === '/' && !isMobile ? "bg-opacity-0" : 'bg-opacity-100')}>
+            className={twMerge("w-full z-40 py-4 px-10 flex flex-col md:flex-row items-center justify-between bg-black", (location.pathname === '/' || location.pathname === '/contact') && !isMobile ? "bg-opacity-0" : 'bg-opacity-100')}>
             <div className="flex items-center justify-between w-full md:w-auto  pb-2">
                 <Link to="/">
                     <div className="hover:text-gray-300 transition-colors text-2xl md:text-3xl lg:text-5xl xl:text-7xl">
@@ -64,7 +65,7 @@ const Navigation = () => {
                     className="md:hidden text-5xl"
                     onClick={() => closeMenu()}
                 >
-                    <CiMenuFries className={twMerge('transition-transform',isOpen ? "-rotate-90": "rotate-0")}/>
+                    <CiMenuFries className={twMerge('transition-transform', isOpen ? "-rotate-90" : "rotate-0")}/>
                 </button>
             </div>
             <motion.div
