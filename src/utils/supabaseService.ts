@@ -29,7 +29,7 @@ export const fetchPhotosWithFilter = async (filter: FetchPhotosFilter): Promise<
     const photoIds = filter.photoIds || [];
     const keywords = filter.keywords || [];
     try {
-        const {data, error} = await supabase.rpc('get_photos', {
+        const {data, error} = await supabase.rpc('get_photos_from', {
             filter_type: filterType,
             keywords: keywords,
             photo_ids: photoIds,
@@ -37,10 +37,13 @@ export const fetchPhotosWithFilter = async (filter: FetchPhotosFilter): Promise<
             offset_count: offset,
             sort_order: sort
         });
+        console.log(data);
+        console.log(error);
         if (error) {
             console.error('Error fetching photos with filter:', error);
             return null;
         }
+
         return data ? data.map(transformToPhoto) : [];
     } catch (err) {
         console.error('Error fetching photos with filter:', err);

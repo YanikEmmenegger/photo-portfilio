@@ -40,7 +40,7 @@ const LikeButton: FC<LikeButtonProps> = ({isLiked, onclick, loading, likes}) => 
                         >
 
                             <p>
-                                {likes }
+                                {likes}
                             </p>
                             <AiFillHeart className="text-red-500 float-right" size={24}/>
 
@@ -52,7 +52,7 @@ const LikeButton: FC<LikeButtonProps> = ({isLiked, onclick, loading, likes}) => 
                             animate={{opacity: 1, scale: 1}}
                             exit={{opacity: 0, scale: 0.8}}
                             transition={{duration: 0.25, ease: "easeInOut"}}
-                            className="absolute gap-1 flex items-center justify-center"
+                            className="absolute gap-2 flex items-center justify-center"
                         >
                             <p>
                                 {likes > 0 ? likes : ""}

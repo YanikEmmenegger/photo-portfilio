@@ -69,12 +69,12 @@ const FilterComponent: FC<FilterComponentProps> = ({onClose}) => {
                 exit={{opacity: 0, y: -50}}
                 transition={{duration: 0.2}}
                 className="p-10 w-full h-full md:h-[80%] md:h -auto max-w-3xl bg-black rounded-2xl flex flex-col justify-between overflow-y-auto">
-                <div className="flex justify-between">
+                <div className="flex gap-3 flex-col-reverse sm:flex-row sm:justify-between">
                     <SortComponent
                         sortMode={sortMode}
                         onSortModeChange={(newSortMode) => setSortMode(newSortMode)}
                     />
-                    <div className={"flex justify-between gap-2"}>
+                    <div className={"flex sm:justify-between gap-2"}>
                         <button
                             className="px-4 py-2 rounded-full text-sm font-bold bg-blue-500 text-white"
                             onClick={applyFilters}

@@ -89,27 +89,21 @@ const HomePage = () => {
                                 {/*{currentImage.title}*/}
                             </motion.h1>
 
-                            <motion.h2
-                                className="text-white text-center text-2xl"
-                                initial={{opacity: 0}}
-                                animate={{opacity: 1}}
-                                exit={{opacity: 0}}
-                                transition={{duration: 1, ease: "easeInOut"}}
-                            >
+                            <div className="text-white text-center flex justify-center flex-wrap items-center text-2xl" >
 
                                 {
                                     currentImage.keywords.map((keyword, index) => (
-                                        <span className={""} key={index}>
-                                            <Link className={"hover:underline"}
-                                                  to={`/images/?keywords=${keyword}`}>
-                                             <TextEffect per={"char"} className={"float-left border-b-2 border-transparent hover:border-white"} preset='blur'>
-                                                {keyword+ ", "}
+                                        <Link key={index} className={"hover:underline text-center"}
+                                              to={`/images/?keywords=${keyword}`}>
+                                            <TextEffect per={"char"}
+                                                        className={"float-left border-b-2 border-transparent hover:border-white"}
+                                                        preset='blur'>
+                                                {keyword + ", "}
                                             </TextEffect>
-                                            </Link>
-                                        </span>
+                                        </Link>
                                     ))
                                 }
-                            </motion.h2>
+                            </div>
                         </div>
                     </motion.div>
                 </AnimatePresence>

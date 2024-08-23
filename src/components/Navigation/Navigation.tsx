@@ -57,7 +57,8 @@ const Navigation = () => {
             className={twMerge("w-full z-40 py-4 px-10 flex flex-col md:flex-row items-center justify-between bg-black", (location.pathname === '/' || location.pathname === '/contact') && !isMobile ? "bg-opacity-0" : 'bg-opacity-100')}>
             <div className="flex items-center justify-between w-full md:w-auto  pb-2">
                 <Link to="/">
-                    <div className="hover:text-gray-300 transition-colors text-2xl md:text-3xl lg:text-5xl xl:text-7xl">
+                    <div onClick={() => closeMenu()}
+                        className="hover:text-gray-300 transition-colors text-2xl md:text-3xl lg:text-5xl xl:text-7xl">
                         KINAY PHOTO
                     </div>
                 </Link>

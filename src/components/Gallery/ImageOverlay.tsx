@@ -17,6 +17,7 @@ const ImageOverlay: FC<ImageOverlayProps> = ({photo, openLightbox}) => {
     const [lineClamp, setLineClamp] = useState<ClassNameValue>('line-clamp-3'); // Default line-clamp to 2
     const descriptionRef = useRef<HTMLHeadingElement>(null);
 
+
     const calculateLineClamp = useCallback(() => {
         if (descriptionRef.current) {
             const element = descriptionRef.current;
@@ -82,7 +83,7 @@ const ImageOverlay: FC<ImageOverlayProps> = ({photo, openLightbox}) => {
                     {photo.description}
                 </h2>
             </div>
-            <div className="flex items-center justify-between px-5 md:px-2 pb-1">
+            <div className="flex absolute items-center right-3 bottom-3">
 
                 <LikeButton likes={photo.likes || 0} loading={loading} onclick={handleLike} isLiked={isLiked}/>
             </div>

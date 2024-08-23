@@ -72,7 +72,7 @@ const ContactPage = () => {
                     <AnimatePresence>
                         <motion.div
                             key={currentImageIndex}
-                            className="w-full h-screen fixed top-0 left-0 -z-10 bg-cover bg-center"
+                            className="w-full h-screen backdrop-blur blur-lg fixed top-0 left-0 -z-10 bg-cover bg-center"
                             style={{backgroundImage}}
                             initial={{opacity: 0}}
                             animate={{opacity: 1}}
@@ -83,11 +83,11 @@ const ContactPage = () => {
                         </motion.div>
                     </AnimatePresence>
                     <div
-                        className="flex flex-col backdrop-blur blur-lg -z-10 w-screen items-center fixed left-0 top-0 justify-center h-screen b g-black bg-opa city-80 p-4">
+                        className="flex flex-col -z-10 w-screen items-center fixed left-0 top-0 justify-center h-screen b g-black bg-opa city-80 p-4">
 
                     </div>
                     <div
-                        className="w-full fixed h-screen flex-col top-0 left-0 -z-10 flex items-center justify-center text-white text-5xl">
+                        className="w-full fixed h-screen flex-col top-0 left-0 -z-10 flex items-center justify-center bg-black bg-opacity-40 text-white text-5xl">
                         <TextEffect per='word' as='h3' preset='blur' className={"pb-5"}>
                             Contact
                         </TextEffect>
