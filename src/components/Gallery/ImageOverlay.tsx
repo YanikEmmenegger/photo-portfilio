@@ -36,7 +36,7 @@ const ImageOverlay: FC<ImageOverlayProps> = ({photo, openLightbox}) => {
     }, []);
 
     useEffect(() => {
-        setIsLiked(likedImageIDs.includes(photo.photo_id));
+        setIsLiked(likedImageIDs.includes(photo.photo_id!));
         setLoading(false);
     }, [likedImageIDs, photo.photo_id]);
 
@@ -52,14 +52,14 @@ const ImageOverlay: FC<ImageOverlayProps> = ({photo, openLightbox}) => {
     const handleLike = async () => {
         setLoading(true);
         if (isLiked) {
-            if (await removeLikedImage(photo.photo_id)) {
+            if (await removeLikedImage(photo.photo_id!)) {
                 setIsLiked(false);
                 photo.likes = photo.likes! - 1;
             } else {
                 toast.error("Something went wrong");
             }
         } else {
-            if (await addLikedImage(photo.photo_id)) {
+            if (await addLikedImage(photo.photo_id!)) {
                 setIsLiked(true);
                 photo.likes = photo.likes! + 1;
             } else {

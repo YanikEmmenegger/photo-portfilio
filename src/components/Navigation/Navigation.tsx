@@ -46,7 +46,6 @@ const Navigation = () => {
     ];
 
     const closeMenu = () => {
-        console.log(isMobile)
         if (isMobile) {
             setIsOpen(!isOpen);
         }

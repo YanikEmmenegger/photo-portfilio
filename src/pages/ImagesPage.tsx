@@ -14,7 +14,7 @@ const ImagesPage = () => {
     const [error, setError] = useState<string | null>(null);
     const [offset, setOffset] = useState(0);
     const [hasMore, setHasMore] = useState(true);
-    const [limit] = useState(30);
+    const [limit] = useState(60);
     const [loading, setLoading] = useState(true);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
 
@@ -109,7 +109,6 @@ const ImagesPage = () => {
     const handleScroll = useCallback(debounce(() => {
         if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 900) {
             if (hasMore && !isLoadingMore) {
-                console.log('loading more');
                 setOffset((prevOffset) => prevOffset + limit); // Increment by limit
             }
         }

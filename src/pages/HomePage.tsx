@@ -84,7 +84,7 @@ const HomePage = () => {
                             >
 
                                 <TextEffect per={"char"} preset='blur'>
-                                    {currentImage.title}
+                                    {currentImage.title!}
                                 </TextEffect>
                                 {/*{currentImage.title}*/}
                             </motion.h1>
@@ -92,12 +92,12 @@ const HomePage = () => {
                             <div className="text-white text-center flex justify-center flex-wrap items-center text-2xl" >
 
                                 {
-                                    currentImage.keywords.map((keyword, index) => (
+                                    currentImage.keywords?.length !=0 &&  currentImage.keywords!.map((keyword, index) => (
                                         <Link key={index} className={"hover:underline text-center"}
                                               to={`/images/?keywords=${keyword}`}>
                                             <TextEffect per={"char"}
                                                         className={"float-left border-b-2 border-transparent hover:border-white"}
-                                                        preset='blur'>
+                                                        preset="slide">
                                                 {keyword + ", "}
                                             </TextEffect>
                                         </Link>

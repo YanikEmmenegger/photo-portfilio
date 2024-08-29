@@ -26,7 +26,7 @@ const App = () => {
                         <Route path="/albums" element={<AlbumPage/>}/>
                         <Route path="/about" element={<AboutPage/>}/>
                         <Route path={"/favorites"} element={<FavoritePage/>}/>
-                        <Route path="/albums/:albumId" element={<AlbumDetailPage/>}/>
+                        <Route path="/album/:albumId" element={<AlbumDetailPage/>}/>
                         <Route path={"world"} element={<World/>}/>
                     </Routes>
                 </Router>

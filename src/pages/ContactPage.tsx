@@ -82,10 +82,7 @@ const ContactPage = () => {
 
                         </motion.div>
                     </AnimatePresence>
-                    <div
-                        className="flex flex-col -z-10 w-screen items-center fixed left-0 top-0 justify-center h-screen b g-black bg-opa city-80 p-4">
 
-                    </div>
                     <div
                         className="w-full fixed h-screen flex-col top-0 left-0 -z-10 flex items-center justify-center bg-black bg-opacity-40 text-white text-5xl">
                         <TextEffect per='word' as='h3' preset='blur' className={"pb-5"}>

@@ -1,16 +1,16 @@
 // src/types/types.ts
 
 export interface Photo {
-    photo_id: number;
+    photo_id?: number;
     filename: string;
     extension: string;
-    size: PhotoSize;
-    gpsInfos: GPSInfos;
-    description: string;
-    keywords: string[];
-    title: string;
+    size?: PhotoSize;
+    gpsInfos?: GPSInfos;
+    description?: string;
+    keywords?: string[];
+    title?: string;
     likes?: number;
-    captureDate: string;
+    captureDate?: string;
 }
 
 export interface PhotoSize {
@@ -37,7 +37,7 @@ export interface Album {
     title: string;
     description: string;
     cover_photo: Photo;
-    photos: Photo[] | [];
+    photos?: Photo[] | [];
 }
 
 // Define the `FilterType` as a union of string literals

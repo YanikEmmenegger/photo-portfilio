@@ -2,6 +2,7 @@ import {FC, useState, useRef, useEffect} from "react";
 import PhotoElement from "./PhotoElement";
 import Lightbox from "./Lightbox";
 import {Photo} from "../../types/types";
+import {motion} from "framer-motion";
 
 interface PhotoGalleryProps {
     photos: Photo[];
@@ -49,20 +50,23 @@ const PhotoGallery: FC<PhotoGalleryProps> = ({photos}) => {
     return (
         <div className="grid gap-1 grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
             {photos.map((photo, index) => (
-                <div
+                <motion.div
+                    animate={{
+                        opacity: visiblePhotos[photo.filename] ? 1 : 0,
+                        scale: visiblePhotos[photo.filename] ? 1 : 0.8,
+                    }}
+                    transition={{duration: 0.3}}
                     key={index}
                     data-filename={photo.filename}
-                    className="photo-item bg-teal-900 opacity-0 transition-opacity duration-500"
+                    className="photo-item transition-opacity duration-500"
                     style={{
-                        opacity: visiblePhotos[photo.filename] ? 1 : 0,
-                        gridRowEnd: `span ${Math.ceil(photo.size.height / photo.size.width * 10)}`,
-                        aspectRatio: `${photo.size.width} / ${photo.size.height}`,
+                        gridRowEnd: `span ${Math.ceil(photo.size!.height / photo.size!.width * 10)}`,
+                        aspectRatio: `${photo.size!.width} / ${photo.size!.height}`,
                     }}>
                     <PhotoElement
                         photo={photo}
-                        isVisible={visiblePhotos[photo.filename] || false}
                         openLightbox={() => openLightbox(index)}
-                    /></div>
+                    /></motion.div>
             ))}
             {lightboxIndex !== null && (
                 <Lightbox

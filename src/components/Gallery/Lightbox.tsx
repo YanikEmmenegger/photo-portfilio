@@ -134,24 +134,24 @@ const Lightbox: FC<LightboxProps> = ({photos, currentIndex, closeLightbox}) => {
                                                 <p className=" text-sm md:text-lg">{photo.description}</p>
                                                 <p className="text-sm">
                                                     {/* Show capture date in format DD. MMMM YYYY */}
-                                                    {new Date(photo.captureDate).toLocaleDateString('en-GB', {
+                                                    {new Date(photo.captureDate!).toLocaleDateString('en-GB', {
                                                         day: 'numeric',
                                                         month: 'long',
                                                         year: 'numeric'
                                                     })}
                                                 </p>
                                                 <p className="text-sm">
-                                                    Keywords: {photo.keywords.join(", ")}
+                                                    Keywords: {photo.keywords!.join(", ")}
                                                 </p>
                                                 <p className="text-sm">
                                                     Location:
                                                     <a
-                                                        href={`https://www.google.com/maps/place/${photo.gpsInfos.latitude},${photo.gpsInfos.longitude}`}
+                                                        href={`https://www.google.com/maps/place/${photo.gpsInfos!.latitude},${photo.gpsInfos!.longitude}`}
                                                         target="_blank"
                                                         rel="noreferrer"
                                                         className="text-blue-400 hover:underline"
                                                     >
-                                                        {photo.gpsInfos.latitude}, {photo.gpsInfos.longitude}
+                                                        {photo.gpsInfos!.latitude}, {photo.gpsInfos!.longitude}
                                                     </a>
                                                 </p>
 
