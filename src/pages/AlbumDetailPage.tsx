@@ -5,6 +5,7 @@ import {fetchAlbumById} from "../utils/supabaseService.ts";
 import toast from "react-hot-toast";
 import AlbumHeader from "../components/Album/AlbumHeader.tsx";
 import AlbumPhoto from "../components/Album/AlbumPhoto.tsx";
+import {AiOutlineLoading} from "react-icons/ai";
 
 const AlbumDetailPage = () => {
     const {albumId} = useParams();
@@ -28,20 +29,29 @@ const AlbumDetailPage = () => {
         fetchAlbum();
     }, [albumId, navigate]);
 
+
     return (
         <div>
-            {loading ? (<></>
-            ) : (
+            {loading ? (<div className={"w-full mt-56 text-5xl flex justify-center "}>
+                <AiOutlineLoading className={"animate-spin"}/>
+            </div>) : (
                 <>
                     <div>
-                        <AlbumHeader description={album!.description} title={album!.title}
-                                     coverPhoto={album!.cover_photo}/>
+                        <AlbumHeader
+                            description={album!.description}
+                            title={album!.title}
+                            coverPhoto={album!.cover_photo}
+                        />
                     </div>
                     <h1 className="mt-10 text-5xl text-center">Album Photos</h1>
 
                     {album!.photos!.length > 0 && (
                         album!.photos!.map((photo, index) => (
-                            <AlbumPhoto key={index} photo={photo} index={index}/>
+                            <AlbumPhoto
+                                key={index}
+                                photo={photo}
+                                index={index}
+                            />
                         ))
                     )}
                 </>

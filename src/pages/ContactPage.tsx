@@ -91,7 +91,7 @@ const ContactPage = () => {
                         <div
                             className="flex flex-wrap md:flex-row w-full mx-auto gap-14 md:gap-10 justify-center items-center">
                             <Social index={1} Icon={CiInstagram} name={"Instagram"}
-                                    url={"https://instagram.com/yanik.ee"}/>
+                                    url={"https://instagram.com/kinay.photo"}/>
                             <Social index={2} Icon={CiLinkedin} name={"Linkedin"}
                                     url={"https://www.linkedin.com/in/yanik-emmenegger/"}/>
                             <Social index={3} Icon={SlSocialGithub} name={"Github"}
