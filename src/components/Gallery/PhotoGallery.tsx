@@ -53,7 +53,7 @@ const PhotoGallery: FC<PhotoGalleryProps> = ({photos}) => {
                 <motion.div
                     animate={{
                         opacity: visiblePhotos[photo.filename] ? 1 : 0,
-                        scale: visiblePhotos[photo.filename] ? 1 : 0.8,
+                        //scale: visiblePhotos[photo.filename] ? 1 : 0.8,
                     }}
                     transition={{duration: 0.3}}
                     key={index}
