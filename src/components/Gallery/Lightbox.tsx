@@ -2,7 +2,7 @@ import {FC, useState, useEffect, useCallback} from "react";
 import {CgClose} from "react-icons/cg";
 import {motion, AnimatePresence} from "framer-motion";
 import {Photo} from "../../types/types.ts";
-import {IoIosArrowUp} from "react-icons/io";
+import {IoIosArrowDown, IoIosArrowUp} from "react-icons/io";
 import {twMerge} from "tailwind-merge";
 import {BsArrowLeft, BsArrowRight} from "react-icons/bs";
 import {useUser} from "../../contexts/UserContext.tsx";
@@ -18,7 +18,6 @@ const Lightbox: FC<LightboxProps> = ({photos, currentIndex, closeLightbox}) => {
     const [isLoading, setIsLoading] = useState(true);
     const [openInfos, setOpenInfos] = useState(false);
     const {lightboxInstructions, setLightboxInstructions} = useUser();
-
 
 
     useEffect(() => {
@@ -99,24 +98,24 @@ const Lightbox: FC<LightboxProps> = ({photos, currentIndex, closeLightbox}) => {
                                 onLoad={() => setIsLoading(false)}
                             />
                             <motion.div
-                                        className={twMerge(
-                                            "absolute border-r-2 border-black border-opacity-50 flex items-center justify-center cursor-w-resize transition-opacity h-full left-0 w-1/2 bg-black z-40",
-                                            lightboxInstructions ? "opacity-0" : "opacity-50"
-                                        )}
-                                        onClick={handlePrev}
-                                        aria-label="Previous"
-                                        transition={{opacity: {duration: 0.5}}}
+                                className={twMerge(
+                                    "absolute border-r-2 border-black border-opacity-50 flex items-center justify-center cursor-w-resize transition-opacity h-full left-0 w-1/2 bg-black z-40",
+                                    lightboxInstructions ? "opacity-0" : "opacity-50"
+                                )}
+                                onClick={handlePrev}
+                                aria-label="Previous"
+                                transition={{opacity: {duration: 0.5}}}
                             >
                                 <BsArrowLeft className="text-9xl"/>
                             </motion.div>
                             <motion.div
-                                        className={twMerge(
-                                            "absolute flex items-center justify-center cursor-e-resize h-full right-0 w-1/2 bg-black z-40 transition-opacity",
-                                            lightboxInstructions ? "opacity-0" : "opacity-50"
-                                        )}
-                                        onClick={handleNext}
-                                        aria-label="Next"
-                                        transition={{opacity: {duration: 0.5}}}
+                                className={twMerge(
+                                    "absolute flex items-center justify-center cursor-e-resize h-full right-0 w-1/2 bg-black z-40 transition-opacity",
+                                    lightboxInstructions ? "opacity-0" : "opacity-50"
+                                )}
+                                onClick={handleNext}
+                                aria-label="Next"
+                                transition={{opacity: {duration: 0.5}}}
                             >
                                 <BsArrowRight className="text-9xl"/>
                             </motion.div>
@@ -125,8 +124,8 @@ const Lightbox: FC<LightboxProps> = ({photos, currentIndex, closeLightbox}) => {
                                     <>
                                         <motion.div
                                             className="bg-black bg-opacity-70 z-50 flex flex-col gap-1 p-5 h-full"
-                                            initial={{opacity: 0, y: 500}}
-                                            animate={openInfos ? {opacity: 1, y: 0} : {opacity: 0, y: 500}}
+                                            initial={{opacity: 0, y: 1000}}
+                                            animate={openInfos ? {opacity: 1, y: 0} : {opacity: 0, y: 1000}}
                                             transition={{duration: 0.3}}
                                         >
                                             <div className="flex-1 gap-2 flex flex-col ">
@@ -158,10 +157,11 @@ const Lightbox: FC<LightboxProps> = ({photos, currentIndex, closeLightbox}) => {
                                             </div>
                                             <div className="mt-auto">
                                                 <button
-                                                    className="p-2 w-full text-xl"
+                                                    className="p-2 flex items-center justify-center flex-col text-center w-full text-xl"
                                                     onClick={() => setOpenInfos(false)}
                                                 >
                                                     Close Information's
+                                                    <IoIosArrowDown/>
                                                 </button>
                                             </div>
                                         </motion.div>
@@ -170,7 +170,7 @@ const Lightbox: FC<LightboxProps> = ({photos, currentIndex, closeLightbox}) => {
                                             initial={{opacity: 1}}
                                             animate={openInfos ? {opacity: 0} : {opacity: 1}}
                                             transition={{duration: 0.3}}
-                                            className="absolute text flex flex-col z-50 cursor-pointer justify-center items-center text-center w-full left-0 bottom-0 text-xl pb-10"
+                                            className="absolute flex flex-col z-50 cursor-pointer justify-center items-center text-center w-full left-0 bottom-0 text-xl pb-10"
                                         >
                                             <IoIosArrowUp/> Open Information's
                                         </motion.div>

@@ -56,7 +56,7 @@ const AlbumCover: FC<AlbumCoverProps> = ({ album }) => {
                         transition={{ duration: 0.5, ease: "easeInOut", delay: 0.2 }}
                     >
                         {showTextEffect && (
-                            <TextEffect per={"word"} preset={"slide"} className="text-2xl text-white">
+                            <TextEffect per={"word"} preset={"fade"} className="text-4xl font-extrabold text-white">
                                 {album.title}
                             </TextEffect>
                         )}
