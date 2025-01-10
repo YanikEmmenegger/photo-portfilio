@@ -1,8 +1,8 @@
 import {Link, useLocation} from 'react-router-dom';
-import {useState, useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {motion, useAnimation} from 'framer-motion';
 import NavItem from './NavItem';
-import {BiHeart} from 'react-icons/bi';
+import {BiHeart, BiLogoInstagram} from 'react-icons/bi';
 import {twMerge} from 'tailwind-merge';
 import {CiMenuFries} from "react-icons/ci";
 
@@ -38,6 +38,7 @@ const Navigation = () => {
     }, []);
 
     const navItems = [
+        {name: <BiLogoInstagram/>, href: "https://www.instagram.com/kinay.photo/"},
         {name: <BiHeart/>, href: "/favorites"},
         {name: "Images", href: "/images"},
         {name: "Albums", href: "/albums", dropDownOptions: []},
