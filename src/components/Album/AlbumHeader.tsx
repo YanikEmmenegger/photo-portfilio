@@ -1,19 +1,19 @@
 import {FC} from "react";
-import {Photo} from "../../types/types.ts";
+import {Media} from "../../types/types.ts";
 import {motion} from "framer-motion";
 import {TextEffect} from "../effects/TextEffect.tsx";
 
 interface AlbumHeaderProps {
     title: string;
     description: string;
-    coverPhoto: Photo;
+    coverPhoto: Media;
 }
 
 const AlbumHeader: FC<AlbumHeaderProps> = ({title, coverPhoto, description}) => {
 
-    const BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL.endsWith('/')
-        ? import.meta.env.VITE_IMAGE_BASE_URL
-        : `${import.meta.env.VITE_IMAGE_BASE_URL}/`;
+    const BASE_URL = import.meta.env.VITE_MEDIA_BASE_URL.endsWith('/')
+        ? import.meta.env.VITE_MEDIA_BASE_URL
+        : `${import.meta.env.VITE_MEDIA_BASE_URL}/`;
 
     const backgroundImage =
         `url('${BASE_URL}${coverPhoto.filename}-big${coverPhoto.extension}')`

@@ -1,4 +1,4 @@
-import {FC, useEffect, useState} from "react";
+import { FC, useEffect, useState } from "react";
 import { Album } from "../../types/types.ts";
 import { TextEffect } from "../effects/TextEffect.tsx";
 import { Link } from "react-router-dom";
@@ -9,9 +9,9 @@ interface AlbumCoverProps {
 }
 
 const AlbumCover: FC<AlbumCoverProps> = ({ album }) => {
-    const BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL.endsWith('/')
-        ? import.meta.env.VITE_IMAGE_BASE_URL
-        : `${import.meta.env.VITE_IMAGE_BASE_URL}/`;
+    const BASE_URL = import.meta.env.VITE_MEDIA_BASE_URL.endsWith('/')
+        ? import.meta.env.VITE_MEDIA_BASE_URL
+        : `${import.meta.env.VITE_MEDIA_BASE_URL}/`;
 
     const originalUrl = `${BASE_URL}${album.cover_photo.filename}-big${album.cover_photo.extension}`;
 
@@ -24,19 +24,18 @@ const AlbumCover: FC<AlbumCoverProps> = ({ album }) => {
         setIsLoaded(true);
     };
 
-    // Use effect to trigger the rendering of the TextEffect after the image has faded in
+    // Trigger text effect after image has faded in
     useEffect(() => {
         if (isLoaded) {
             const timer = setTimeout(() => {
                 setShowTextEffect(true);
-            }, 500); // Delay to ensure image has fully faded in before rendering text effect
-
+            }, 500); // Delay ensures the image has fully faded in before text effect
             return () => clearTimeout(timer);
         }
     }, [isLoaded]);
 
     return (
-        <div className="relative max-w-2xl">
+        <div className="relative w-full h-[300px] max-w-2xl overflow-hidden">
             <Link to={`/album/${album.album_id}`}>
                 <motion.img
                     src={originalUrl}
@@ -50,13 +49,17 @@ const AlbumCover: FC<AlbumCoverProps> = ({ album }) => {
                 />
                 {isLoaded && (
                     <motion.div
-                        className="absolute flex items-center justify-center inset-0 bg-black hover:bg-opacity-60 bg-opacity-30"
+                        className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 hover:bg-opacity-60"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.5, ease: "easeInOut", delay: 0.2 }}
                     >
                         {showTextEffect && (
-                            <TextEffect per={"word"} preset={"fade"} className="text-4xl font-extrabold text-white">
+                            <TextEffect
+                                per="word"
+                                preset="fade"
+                                className="text-xl 2xl:text-2xl font-extrabold text-white"
+                            >
                                 {album.title}
                             </TextEffect>
                         )}

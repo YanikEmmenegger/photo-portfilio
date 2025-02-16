@@ -8,8 +8,6 @@ interface UserContextType {
     fetchLikedImages: () => void;
     addLikedImage: (photoId: number) => Promise<boolean>;
     removeLikedImage: (photoId: number) => Promise<boolean>;
-    lightboxInstructions: boolean; // Add this field to the context
-    setLightboxInstructions: (value: boolean) => void; // Add this function to the context
 }
 
 // Create a context with default values
@@ -19,9 +17,9 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const [userId, setUserId] = useState<string | null>(null);
     const [likedImageIDs, setLikedImageIDs] = useState<number[]>([]);
-    const [lightboxInstructions, setLightboxInstructions] = useState<boolean>(false);
+    //const [lightboxInstructions, setLightboxInstructions] = useState<boolean>(false);
 
-    useEffect(() => {
+    /*useEffect(() => {
         // Check localStorage for lightboxInstructions
         const instructionsShown = localStorage.getItem('lightboxInstructions');
         if (instructionsShown === 'true') {
@@ -34,7 +32,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
     const handleSetLightboxInstructions = (value: boolean) => {
         setLightboxInstructions(value);
         localStorage.setItem('lightboxInstructions', value.toString());
-    };
+    };*/
 
     // Fetch liked images from the database
     const fetchLikedImages = async () => {
@@ -144,8 +142,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
             fetchLikedImages,
             addLikedImage,
             removeLikedImage,
-            lightboxInstructions,
-            setLightboxInstructions: handleSetLightboxInstructions
         }}>
             {children}
         </UserContext.Provider>

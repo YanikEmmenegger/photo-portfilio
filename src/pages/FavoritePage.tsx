@@ -1,15 +1,15 @@
 import {useEffect, useState} from "react";
-import {FetchPhotosFilter, Photo} from "../types/types.ts";
+import {FetchPhotosFilter, Media} from "../types/types.ts";
 import {useUser} from "../contexts/UserContext.tsx";
-import RenderGalleryContent from "../components/Gallery/renderGalleryContent.tsx";
 import {fetchPhotosWithFilter} from "../utils/supabaseService.ts";
+import Gallery from "../components/Gallery/Gallery.tsx";
 
 
 const FavoritePage = () => {
 
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [photos, setPhotos] = useState<Photo[]>([]);
+    const [medias, setMedias] = useState<Media[]>([]);
 
     const {likedImageIDs} = useUser();
 
@@ -20,15 +20,15 @@ const FavoritePage = () => {
 
             try {
                 const filter:FetchPhotosFilter = {
-                    photoIds: likedImageIDs,
+                    mediaIds: likedImageIDs,
                     sort: 'Newest'
                 }
                 const newPhotos = await fetchPhotosWithFilter(filter);
 
                 if (newPhotos === null || newPhotos.length === 0) {
-                    setPhotos([]);
+                    setMedias([]);
                 } else {
-                    setPhotos(newPhotos);
+                    setMedias(newPhotos);
                 }
 
             } catch (err) {
@@ -38,15 +38,13 @@ const FavoritePage = () => {
             }
         };
 
-        fetchPhotos();
+        fetchPhotos().then(r => r);
     }, [likedImageIDs]);
 
 
     return (
         <div className={"w-full h-auto"}>
-            <RenderGalleryContent loading={loading} error={error} photos={photos} showAllImages={true}
-                                  header={"No liked photos found, start liking"}
-                                  text={"this feature doesnt wok in Private Mode"}/>
+            <Gallery medias={medias} loading={loading} error={error} />
         </div>
     );
 }

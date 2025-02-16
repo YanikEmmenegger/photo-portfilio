@@ -1,6 +1,6 @@
 // src/services/transformToPhoto.ts
 
-import {Album, KeywordGroup, Photo} from '../types/types';
+import {Album, KeywordGroup, Media} from '../types/types';
 
 export const transformToPhoto = (item: {
     photo_id: number;
@@ -15,8 +15,8 @@ export const transformToPhoto = (item: {
     title: string;
     like_count: number;
     capture_date: string;
-}): Photo => ({
-    photo_id: item.photo_id,
+}): Media => ({
+    media_id: item.photo_id,
     filename: item.filename,
     extension: item.extension,
     size: {
@@ -38,14 +38,14 @@ export const transformToAlbum = (item: {
    album_id: number;
     album_name: string;
     description: string;
-    cover_photo: Photo;
-    photos: Photo[];
+    cover_photo: Media;
+    photos: Media[];
 }): Album => ({
     album_id: item.album_id,
     title: item.album_name,
     description: item.description,
     cover_photo: item.cover_photo,
-    photos: item.photos || [],
+    medias: item.photos || [],
 
 });
 

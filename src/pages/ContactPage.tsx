@@ -10,7 +10,7 @@ import {TextEffect} from "../components/effects/TextEffect.tsx";
 const ContactPage = () => {
 
 
-    const BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
+    const BASE_URL = import.meta.env.VITE_MEDIA_BASE_URL;
     const {images, currentImageIndex, setImages, setCurrentImageIndex} = useImageContext();
     const [loading, setLoading] = useState(true);
 

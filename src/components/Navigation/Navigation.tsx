@@ -54,7 +54,7 @@ const Navigation = () => {
 
     return (
         <nav
-            className={twMerge("w-full z-40 py-4 px-10 flex flex-col md:flex-row items-center justify-between bg-black", (location.pathname === '/' || location.pathname === '/contact') && !isMobile ? "bg-opacity-0" : 'bg-opacity-100')}>
+            className={twMerge("w-full z-50 py-4 px-10 flex flex-col md:flex-row items-center justify-between bg-black", (location.pathname === '/' || location.pathname === '/contact') && !isMobile ? "bg-opacity-0" : 'bg-opacity-100')}>
             <div className="flex items-center justify-between w-full md:w-auto  pb-2">
                 <Link to="/">
                     <div onClick={() => closeMenu()}

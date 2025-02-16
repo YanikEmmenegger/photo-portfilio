@@ -1,5 +1,5 @@
 import {supabase} from '../clients/supabaseClient';
-import {Album, FetchPhotosFilter, KeywordWithGroup, Photo} from '../types/types';
+import {Album, FetchPhotosFilter, KeywordWithGroup, Media} from '../types/types';
 import {transformToAlbum, transformToKeywordWithGroup, transformToPhoto} from './transformToTypes';
 
 /**
@@ -8,14 +8,14 @@ import {transformToAlbum, transformToKeywordWithGroup, transformToPhoto} from '.
  * @param filter
  */
 
-export const fetchPhotosWithFilter = async (filter: FetchPhotosFilter): Promise<Photo[] | null> => {
+export const fetchPhotosWithFilter = async (filter: FetchPhotosFilter): Promise<Media[] | null> => {
 
     //if no filtertype is provided check if there are keywords or photoids if none, set filtertype to all
     let filterType = filter.filterType;
     if (!filterType) {
         if (filter.keywords && filter.keywords.length > 0) {
             filterType = filter.KeywordFilterMode === 'AND' ? 'keywords_and' : 'keywords_or';
-        } else if (filter.photoIds) {
+        } else if (filter.mediaIds) {
             filterType = 'by_id';
         } else {
             filterType = 'all';
@@ -26,18 +26,11 @@ export const fetchPhotosWithFilter = async (filter: FetchPhotosFilter): Promise<
 
     const sort = filter.sort === "Newest" ? "desc" : "asc";
 
-    const photoIds = filter.photoIds || [];
+    const photoIds = filter.mediaIds || [];
     const keywords = filter.keywords || [];
     try {
 
-        console.log({
-            filter_type: filterType,
-            keywords: keywords,
-            photo_ids: photoIds,
-            limit_count: limit,
-            offset_count: offset,
-            sort_order: sort
-        })
+
 
         const {data, error} = await supabase.rpc('get_photos_from', {
             filter_type: filterType,

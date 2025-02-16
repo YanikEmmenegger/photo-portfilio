@@ -1,19 +1,19 @@
 import React, {createContext, useState, useContext, ReactNode} from 'react';
-import {Photo} from "../types/types.ts";
+import {Media} from "../types/types.ts";
 
 
 
 interface BackgroundImageContextProps {
-    images: Photo[];
+    images: Media[];
     currentImageIndex: number;
-    setImages: React.Dispatch<React.SetStateAction<Photo[]>>;
+    setImages: React.Dispatch<React.SetStateAction<Media[]>>;
     setCurrentImageIndex: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const BackgroundImageContext = createContext<BackgroundImageContextProps | undefined>(undefined);
 
 export const BackgroundImageProvider: React.FC<{ children: ReactNode }> = ({children}) => {
-    const [images, setImages] = useState<Photo[]>([]);
+    const [images, setImages] = useState<Media[]>([]);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     return (

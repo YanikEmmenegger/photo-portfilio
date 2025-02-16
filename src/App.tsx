@@ -3,7 +3,7 @@ import HomePage from './pages/HomePage.tsx';
 import ContactPage from './pages/ContactPage.tsx';
 import {BackgroundImageProvider} from './contexts/BackgroundImageContext.tsx';
 import Navigation from "./components/Navigation/Navigation.tsx";
-import ImagesPage from "./pages/ImagesPage.tsx";
+import MediaPage from "./pages/MediaPage.tsx";
 import AlbumPage from "./pages/AlbumPage.tsx";
 import AlbumDetailPage from "./pages/AlbumDetailPage.tsx";
 import {UserProvider} from "./contexts/UserContext.tsx";
@@ -22,7 +22,7 @@ const App = () => {
                     <Routes>
                         <Route path="/" element={<HomePage/>}/>
                         <Route path="/contact" element={<ContactPage/>}/>
-                        <Route path="/images" element={<ImagesPage/>}/>
+                        <Route path="/images" element={<MediaPage/>}/>
                         <Route path="/albums" element={<AlbumPage/>}/>
                         <Route path="/about" element={<AboutPage/>}/>
                         <Route path={"/favorites"} element={<FavoritePage/>}/>

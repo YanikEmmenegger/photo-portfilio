@@ -1,10 +1,10 @@
 // src/types/types.ts
 
-export interface Photo {
-    photo_id?: number;
+export interface Media {
+    media_id?: number;
     filename: string;
     extension: string;
-    size?: PhotoSize;
+    size?: MediaSize;
     gpsInfos?: GPSInfos;
     description?: string;
     keywords?: string[];
@@ -13,7 +13,7 @@ export interface Photo {
     captureDate?: string;
 }
 
-export interface PhotoSize {
+export interface MediaSize {
     width: number;
     height: number;
 }
@@ -36,8 +36,8 @@ export interface Album {
     album_id: number;
     title: string;
     description: string;
-    cover_photo: Photo;
-    photos?: Photo[] | [];
+    cover_photo: Media;
+    medias?: Media[] | [];
 }
 
 // Define the `FilterType` as a union of string literals
@@ -50,7 +50,7 @@ export interface FetchPhotosFilter {
     keywords?: string[],
     filterType?: FilterType,
     KeywordFilterMode?: KeywordFilterModeType,
-    photoIds?: number[],
+    mediaIds?: number[],
     limit?: number,
     offset?: number,
     sort?: SortType

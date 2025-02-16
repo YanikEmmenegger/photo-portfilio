@@ -12,7 +12,9 @@ const AlbumPage = () => {
     useEffect(() => {
         // Fetch all albums
         fetchAlbums().then((albums) => {
-            setAlbums(albums);
+            //change direction of the albums
+
+            setAlbums(albums.reverse());
             setLoading(false);
             // Set maxCols based on the number of albums
             setMaxCols(albums.length < 2 ? 1 : albums.length >= 4 ? 4 : 2);
@@ -22,14 +24,14 @@ const AlbumPage = () => {
     return (
 
 
-        <div className="mt-10 p-10 flex justify-center">
+        <div className="mt-2 md:mt-10 p-10 flex items-center justify-center">
              {loading ? (
                  <p>Loading...</p>
              ) : (
                  <div
                      className={twMerge(
-                         "grid grid-cols-1 sm:grid-cols-2 gap-3 justify-items-center",
-                         `md:grid-cols-${maxCols}`
+                         "grid grid-cols-1 md:grid-cols-2 gap-3 justify-center items-center",
+                         `lg:grid-cols-${maxCols}`
                      )}
                  >
                      {albums.length > 0 ? (
