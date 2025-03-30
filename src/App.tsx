@@ -17,6 +17,7 @@ const App = () => {
     return (
         <UserProvider>
             <BackgroundImageProvider>
+                <div className={"flex flex-col min-h-screen"}>
                 <Router basename={"/"}>
                     <Navigation/>
                     <Routes>
@@ -30,6 +31,7 @@ const App = () => {
                         <Route path={"world"} element={<World/>}/>
                     </Routes>
                 </Router>
+                </div>
             </BackgroundImageProvider>
             <Toaster/>
             <BackToTop/>

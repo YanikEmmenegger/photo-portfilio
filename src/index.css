@@ -70,3 +70,7 @@ body::-webkit-scrollbar {
 * {
     font-weight: 100;
 }
+
+.leaflet-marker-icon{
+    border-radius: 25%;
+}

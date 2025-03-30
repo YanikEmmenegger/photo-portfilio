@@ -98,7 +98,7 @@ const MediaInfoBox: FC<MediaInfoBoxProps> = ({ media, onClose, isExpanded }) => 
     return (
         <AnimatePresence>
             <motion.div
-                className="fixed inset-0 bg-black md:bg-opacity-80 z-50 flex items-center justify-center"
+                className="fixed inset-0 bg-black md:bg-black/80 z-50 flex items-center justify-center"
                 variants={backdropVariants}
                 initial="hidden"
                 animate="visible"

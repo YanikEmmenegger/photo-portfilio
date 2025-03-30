@@ -102,7 +102,7 @@ const HomePage = () => {
                         />
                     )}
                     {/* Overlay for title and keywords with a lower z-index so Navigation stays clickable */}
-                    <div className="flex flex-col items-center justify-center h-screen fixed top-0 w-screen bg-black bg-opacity-20 p-4 -z-10">
+                    <div className="flex flex-col items-center justify-center h-screen fixed top-0 w-screen bg-black/20 p-4 -z-10">
                         <motion.h1
                             className="text-white text-6xl"
                             initial={{ opacity: 0 }}

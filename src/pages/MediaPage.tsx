@@ -67,7 +67,7 @@ const MediaPage = () => {
         }
     }, [offset, hasMore, fetchImages]);
 
-    // Modern debounce without Lodash
+    // Debounce the scroll event to load more items when the user reaches the bottom
     const handleScroll = useDebouncedCallback(() => {
         if (
             window.innerHeight + window.scrollY >= document.documentElement.offsetHeight - 300 &&
@@ -114,7 +114,15 @@ const MediaPage = () => {
             <AnimatePresence>
                 {showFilters && <FilterComponent onClose={() => setShowFilters(false)} />}
             </AnimatePresence>
-            <Gallery error={error} loading={loading} medias={photos} />
+
+            {loading ? (
+                <div className="text-center py-4">Loading...</div>
+            ) : error ? (
+                <div className="text-center py-4 text-red-500">Error: {error}</div>
+            ) : (
+                <Gallery error={error} loading={loading} medias={photos} />
+            )}
+
             <div className="w-full py-4 flex flex-col items-center">
                 {isLoadingMore && (
                     <span className="text-lg font-semibold text-gray-500">Loading more...</span>

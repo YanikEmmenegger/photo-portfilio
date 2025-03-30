@@ -30,7 +30,7 @@ const AlbumHeader: FC<AlbumHeaderProps> = ({title, coverPhoto, description}) => 
                 transition={{duration: 1, ease: "easeInOut"}}>
             </motion.div>
             <div
-                className={"bg-black bg-opacity-50 -z-10 grow w-screen top-0 left-0 flex flex-col justify-center items-center"}>
+                className={"bg-black/50 -z-10 grow w-screen top-0 left-0 flex flex-col justify-center items-center"}>
                 <span className={"max-w-4xl -mt-20 w-full p-10"}>
                     <TextEffect per={"word"} preset={"slide"} className={"text-xl font-semibold sm:text-4xl lg:text-6xl"}>{title}</TextEffect>
                     <motion.h1

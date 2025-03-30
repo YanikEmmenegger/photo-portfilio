@@ -59,7 +59,7 @@ const Photo: FC<PhotoProps> = ({ photo, onClick, onInfoClick }) => {
             <div className="absolute top-2 right-2 md:opacity-0 group-hover:opacity-100 flex items-center gap-2 z-10">
                 <button
                     onClick={onInfoClick}
-                    className="bg-black bg-opacity-50 text-white p-2 rounded-full"
+                    className="bg-black/50 text-white p-2 rounded-full"
                 >
                     <RiInfoI />
                 </button>

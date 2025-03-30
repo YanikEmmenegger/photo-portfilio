@@ -63,7 +63,7 @@ const ContactPage = () => {
                         style={{ backgroundImage }}
                     />
 
-                    <div className="w-full fixed h-screen flex-col top-0 left-0 -z-10 flex items-center justify-center bg-bl ack bg-opacity-40 text-white text-5xl">
+                    <div className="w-full fixed h-screen flex-col top-0 left-0 -z-10 flex items-center justify-center bg-black/40 text-white text-5xl">
                         <TextEffect per="word" as="h3" preset="blur" className="pb-5">
                             Contact
                         </TextEffect>

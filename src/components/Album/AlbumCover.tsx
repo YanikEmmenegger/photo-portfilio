@@ -49,7 +49,7 @@ const AlbumCover: FC<AlbumCoverProps> = ({ album }) => {
                 />
                 {isLoaded && (
                     <motion.div
-                        className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 hover:bg-opacity-60"
+                        className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/60"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.5, ease: "easeInOut", delay: 0.2 }}

@@ -11,7 +11,7 @@ interface DropdownProps {
 const Dropdown: FC<DropdownProps> = ({options, path, isOpen, onDropdownClose}) => {
     return (
         <div
-            className={`absolute left-1/2 transform -translate-x-1/2 mt-8 flex-col bg-black bg-opacity-100 border-2 border-white transition-all duration-300 ease-in-out ${
+            className={`absolute left-1/2 transform -translate-x-1/2 mt-8 flex-col bg-black/100 border-2 border-white transition-all duration-300 ease-in-out ${
                 isOpen ? 'flex opacity-100 translate-y-0' : 'hidden opacity-0 translate-y-4'
             }`}
             onMouseLeave={onDropdownClose}
@@ -21,7 +21,7 @@ const Dropdown: FC<DropdownProps> = ({options, path, isOpen, onDropdownClose}) =
                 <Link
                     key={index}
                     to={`${path}/${option}`}
-                    className="text-xl text-white py-2 px-8 bg-black bg-opacity-0 hover:bg-opacity-100 hover:text-opacity-75 whitespace-nowrap"
+                    className="text-xl text-white py-2 px-8 bg-black/0 hover:bg-black/100 hover:text-opacity-75 whitespace-nowrap"
                 >
                     {option}
                 </Link>

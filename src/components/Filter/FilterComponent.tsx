@@ -60,7 +60,7 @@ const FilterComponent: FC<FilterComponentProps> = ({onClose}) => {
             animate={{opacity: 1}}
             exit={{opacity: 0}}
             transition={{duration: 0.1}}
-            className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-75 z-50"
+            className="fixed inset-0 flex justify-center items-center bg-black/75 z-50"
         >
 
             <motion.div

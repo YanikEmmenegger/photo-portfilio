@@ -136,7 +136,7 @@ const Video: FC<VideoProps> = ({ video, onInfoClick, onClick }) => {
             <div className="absolute top-2 right-2 md:opacity-0 group-hover:opacity-100 flex items-center gap-2 z-10">
                 <button
                     onClick={onInfoClick}
-                    className="bg-black bg-opacity-50 text-white p-2 rounded-full"
+                    className=" bg-black/50 text-white p-2 rounded-full"
                 >
                     <RiInfoI />
                 </button>
@@ -149,14 +149,14 @@ const Video: FC<VideoProps> = ({ video, onInfoClick, onClick }) => {
             >
                 <button
                     onClick={handlePlayPause}
-                    className="bg-black bg-opacity-50 text-white p-2 rounded-full"
+                    className="bg-black/50 text-white p-2 rounded-full"
                 >
                     {isPlaying ? <RiPauseFill /> : <RiPlayMiniFill />}
                 </button>
                 {isPlaying && (
                     <button
                         onClick={handleFullscreen}
-                        className="bg-black bg-opacity-50 text-white p-2 rounded-full"
+                        className=" bg-black/50 text-white p-2 rounded-full"
                     >
                         <RiFullscreenFill />
                     </button>
