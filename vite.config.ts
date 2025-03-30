@@ -1,11 +1,13 @@
 import {defineConfig} from 'vite';
 import react from '@vitejs/plugin-react';
 import UnpluginFonts from 'unplugin-fonts/vite';
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
     base: '/', // Base path for assets
     plugins: [
         react(),
+        tailwindcss(),
         UnpluginFonts({
             google: {
                 families: [

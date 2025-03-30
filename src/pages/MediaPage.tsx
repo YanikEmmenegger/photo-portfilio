@@ -3,9 +3,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { FetchPhotosFilter, Media, SortType } from '../types/types';
 import FilterComponent from '../components/Filter/FilterComponent';
 import { AnimatePresence } from 'framer-motion';
-import debounce from 'lodash/debounce';
 import { fetchPhotosWithFilter } from '../utils/supabaseService';
 import Gallery from '../components/Gallery/Gallery';
+import { useDebouncedCallback } from 'use-debounce';
 
 const LIMIT = 20;
 
@@ -21,7 +21,6 @@ const MediaPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    // Memoize search parameters
     const searchParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
 
     const fetchImages = useCallback(async (newOffset = 0) => {
@@ -53,7 +52,6 @@ const MediaPage = () => {
         }
     }, [searchParams]);
 
-    // Reset filters & fetch initial photos when query parameters change
     useEffect(() => {
         setLoading(true);
         setOffset(0);
@@ -62,7 +60,6 @@ const MediaPage = () => {
         fetchImages(0);
     }, [searchParams, fetchImages]);
 
-    // Fetch more images when offset changes (pagination)
     useEffect(() => {
         if (hasMore && offset > 0) {
             setIsLoadingMore(true);
@@ -70,25 +67,21 @@ const MediaPage = () => {
         }
     }, [offset, hasMore, fetchImages]);
 
-    // Debounced scroll handler: start loading when within 300px of bottom
-    const handleScroll = useCallback(
-        debounce(() => {
-            if (
-                window.innerHeight + window.scrollY >= document.documentElement.offsetHeight - 300 &&
-                hasMore &&
-                !isLoadingMore
-            ) {
-                setOffset(prev => prev + LIMIT);
-            }
-        }, 200),
-        [hasMore, isLoadingMore]
-    );
+    // Modern debounce without Lodash
+    const handleScroll = useDebouncedCallback(() => {
+        if (
+            window.innerHeight + window.scrollY >= document.documentElement.offsetHeight - 300 &&
+            hasMore &&
+            !isLoadingMore
+        ) {
+            setOffset(prev => prev + LIMIT);
+        }
+    }, 200);
 
     useEffect(() => {
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => {
             window.removeEventListener('scroll', handleScroll);
-            handleScroll.cancel();
         };
     }, [handleScroll]);
 
