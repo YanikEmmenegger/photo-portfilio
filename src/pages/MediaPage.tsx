@@ -7,7 +7,7 @@ import { fetchPhotosWithFilter } from '../utils/supabaseService';
 import Gallery from '../components/Gallery/Gallery';
 import { useDebouncedCallback } from 'use-debounce';
 
-const LIMIT = 20;
+const LIMIT = 30;
 
 const MediaPage = () => {
     const [showFilters, setShowFilters] = useState(false);

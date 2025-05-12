@@ -12,12 +12,13 @@ import {Toaster} from "react-hot-toast";
 import World from "./pages/World.tsx";
 import BackToTop from "./components/BackToTop.tsx";
 import AboutPage from "./pages/AboutPage.tsx";
+import VotingPage from "./pages/VotingPage.tsx";
 
 const App = () => {
     return (
         <UserProvider>
             <BackgroundImageProvider>
-                <div className={"flex flex-col min-h-screen"}>
+                <div className={"flex flex-col"}>
                 <Router basename={"/"}>
                     <Navigation/>
                     <Routes>
@@ -28,7 +29,8 @@ const App = () => {
                         <Route path="/about" element={<AboutPage/>}/>
                         <Route path={"/favorites"} element={<FavoritePage/>}/>
                         <Route path="/album/:albumId" element={<AlbumDetailPage/>}/>
-                        <Route path={"world"} element={<World/>}/>
+                        <Route path={"/world"} element={<World/>}/>
+                        <Route path={"/vote"} element={<VotingPage/>}/>
                     </Routes>
                 </Router>
                 </div>

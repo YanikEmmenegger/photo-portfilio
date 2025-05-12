@@ -1,6 +1,6 @@
 'use client';
 import {motion, Variants} from 'framer-motion';
-import React from 'react';
+import React, {JSX} from 'react';
 
 type PresetType = 'blur' | 'shake' | 'scale' | 'fade' | 'slide';
 
@@ -82,9 +82,9 @@ const AnimationComponent: React.FC<{
     if (per === 'word') {
         return (
             <motion.span
-                aria-hidden='true'
+                aria-hidden="true"
                 variants={variants}
-                className='inline-block whitespace-pre'
+                className="inline-block whitespace-pre"
             >
                 {word}
             </motion.span>
@@ -92,18 +92,18 @@ const AnimationComponent: React.FC<{
     }
 
     return (
-        <span className='inline-block whitespace-pre'>
-      {word.split('').map((char, charIndex) => (
-          <motion.span
-              key={`char-${charIndex}`}
-              aria-hidden='true'
-              variants={variants}
-              className='inline-block whitespace-pre'
-          >
-              {char}
-          </motion.span>
-      ))}
-    </span>
+        <span className="inline-block whitespace-pre">
+            {word.split('').map((char, charIndex) => (
+                <motion.span
+                    key={`char-${charIndex}`}
+                    aria-hidden="true"
+                    variants={variants}
+                    className="inline-block whitespace-pre"
+                >
+                    {char}
+                </motion.span>
+            ))}
+        </span>
     );
 });
 
@@ -117,8 +117,9 @@ export function TextEffect({
                                className,
                                preset,
                            }: TextEffectProps) {
-    const words = children.split(/(\S+)/);
-    const MotionTag = motion[as as keyof typeof motion];
+    const words = children.split(/(\S+)/).filter(Boolean); // Filter out empty strings
+    // const MotionTag = motion[as as keyof typeof motion];
+    console.log(as)
     const selectedVariants = preset
         ? presetVariants[preset]
         : {container: defaultContainerVariants, item: defaultItemVariants};
@@ -126,9 +127,9 @@ export function TextEffect({
     const itemVariants = variants?.item || selectedVariants.item;
 
     return (
-        <MotionTag
-            initial='hidden'
-            animate='visible'
+        <motion.span
+            initial="hidden"
+            animate="visible"
             aria-label={children}
             variants={containerVariants}
             className={className}
@@ -141,6 +142,6 @@ export function TextEffect({
                     per={per}
                 />
             ))}
-        </MotionTag>
+        </motion.span>
     );
 }

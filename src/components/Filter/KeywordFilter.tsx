@@ -1,10 +1,26 @@
-import {FC, useEffect, useState} from "react";
-import {fetchAllKeywords} from "../../utils/supabaseService";
+import { FC, useEffect, useState } from "react";
+import { fetchAllKeywords } from "../../utils/supabaseService";
 import KeywordGroup from "./KeywordGroup";
 import FilterModeSwitch from "./FilterModeSwitch";
-import {motion} from "framer-motion";
-import {debounce} from "lodash";
+import { motion } from "framer-motion";
 import Keyword from "./Keyword.tsx";
+
+// Custom debounce hook
+function useDebounce<T>(value: T, delay: number): T {
+    const [debouncedValue, setDebouncedValue] = useState(value);
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedValue(value);
+        }, delay);
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [value, delay]);
+
+    return debouncedValue;
+}
 
 interface KeywordFilterProps {
     selectedKeywords: string[];
@@ -23,13 +39,16 @@ const KeywordFilter: FC<KeywordFilterProps> = ({
     const [loading, setLoading] = useState<boolean>(true);
     const [searchQuery, setSearchQuery] = useState<string>("");
 
+    // Apply debounce to search query
+    const debouncedSearchQuery = useDebounce(searchQuery, 500);
+
     useEffect(() => {
         const fetchKeywords = async () => {
             try {
                 const keywords = await fetchAllKeywords();
                 const grouped = new Map<string, string[]>();
 
-                keywords.forEach(({keyword, keyword_groups}) => {
+                keywords.forEach(({ keyword, keyword_groups }) => {
                     const groupName = keyword_groups;
                     if (!grouped.has(groupName)) {
                         grouped.set(groupName, []);
@@ -73,20 +92,12 @@ const KeywordFilter: FC<KeywordFilterProps> = ({
         setSelectedKeywords(newSelectedKeywords);
     };
 
-    const handleSearchDebounced = debounce((query: string) => {
-        setSearchQuery(query);
-    }, 500);
-
-    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-        handleSearchDebounced(event.target.value);
-    };
-
     return (
         <motion.div
-            initial={{opacity: 0}}
-            animate={{opacity: 1}}
-            exit={{opacity: 0}}
-            transition={{duration: 0.2}}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
         >
             {!loading && (
                 <div className="flex flex-col gap-4">
@@ -100,22 +111,26 @@ const KeywordFilter: FC<KeywordFilterProps> = ({
 
                     <div className="flex flex-wrap gap-2">
                         {selectedKeywords.map((keyword) => (
-                            <Keyword name={keyword} isSelected={true} onClick={() => toggleKeyword(keyword)}
-                                     key={keyword}/>
+                            <Keyword
+                                name={keyword}
+                                isSelected={true}
+                                onClick={() => toggleKeyword(keyword)}
+                                key={keyword}
+                            />
                         ))}
                     </div>
 
                     <input
                         type="text"
-                        className="p-2 hidden border border-gray-300 rounded-md"
+                        className="p-2 border border-gray-300 rounded-md"
                         placeholder="Search keywords..."
-                        onChange={handleSearch}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                     />
 
                     {Array.from(groupedKeywords.entries()).map(([group, keywords]) => {
                         const filteredKeywords = keywords.filter(
                             (keyword) =>
-                                keyword.toLowerCase().includes(searchQuery.toLowerCase()) &&
+                                keyword.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) &&
                                 !selectedKeywords.includes(keyword)
                         );
 

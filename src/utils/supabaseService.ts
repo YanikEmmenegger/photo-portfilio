@@ -1,5 +1,5 @@
 import {supabase} from '../clients/supabaseClient';
-import {Album, FetchPhotosFilter, KeywordWithGroup, Media} from '../types/types';
+import {Album, FetchPhotosFilter, KeywordWithGroup, Media, Vote} from '../types/types';
 import {transformToAlbum, transformToKeywordWithGroup, transformToPhoto} from './transformToTypes';
 
 /**
@@ -163,3 +163,108 @@ export const fetchAlbumById = async (albumId: number): Promise<Album | null> => 
         return null;
     }
 };
+
+
+// Fetch liked images from the database
+export const fetchLikedImagesFromDb = async (userId: string | null) => {
+
+    const {data: likes, error} = await supabase
+        .from('likes')
+        .select('photo_id')
+        .eq('user_id', userId);
+
+    if (error) {
+        console.error('Error fetching liked images:', error);
+        return [];
+    }
+
+    return likes?.map(like => like.photo_id) || [];
+};
+
+// Add a liked image to the database
+export const addLikedImageToDb = async (photoId: number, userId: string | null) => {
+    if (!userId) return false
+    const {error} = await supabase
+        .from('likes')
+        .insert([{user_id: userId, photo_id: photoId}]);
+
+    if (error) {
+        console.error('Error adding liked image:', error);
+        return false;
+    }
+    return true;
+}
+
+
+// Remove a liked image from the database
+export const removeLikedImageFromDB = async (photoId: number, userId: string | null) => {
+    if (!userId) return false
+    const {error} = await supabase
+        .from('likes')
+        .delete()
+        .match({user_id: userId, photo_id: photoId});
+
+    if (error) {
+        console.error('Error removing liked image:', error);
+        return false;
+    }
+    return true;
+}
+
+export const submitVoteToDB = async (userId: string, media1_id: number, media2_id: number, selected_photo_id: number) => {
+    if (!userId) return false
+    const {error} = await supabase
+        .from('votes')
+        .insert([{user_id: userId, media1_id: media1_id, media2_id: media2_id, selected_photo_id: selected_photo_id}]);
+
+    if (error) {
+        console.error('Error adding liked image:', error);
+        return false;
+    }
+    return true;
+}
+
+
+export const getUnvotedMediaPair = async (userId: string | null, photoId?: number, position?: string) => {
+    if (!userId) return false
+
+    try {
+        const {data, error} = await supabase.rpc('get_unvoted_media_pair', {
+            p_user_id: userId,
+            p_photo_id: photoId,
+            p_position: position ? position : "media2"
+        })
+
+        if (error) {
+            console.error('RPC error:', error)
+            return false
+        }
+
+        if (!data || data.length === 0) return false
+
+        const {media1_id, media2_id} = data[0]
+
+        const filter: FetchPhotosFilter = {
+            mediaIds: [media1_id, media2_id],
+        }
+
+        return await fetchPhotosWithFilter(filter)
+    } catch (err) {
+        console.error('Unexpected error:', err)
+        return []
+    }
+}
+
+export const fetchUserVote = async (userId: string): Promise<Vote[]> => {
+    const {data: votes, error} = await supabase
+        .from('votes')
+        .select('*')
+        .eq('user_id', userId);
+
+    if (error) {
+        console.error('Error fetching votes :', error);
+        return [];
+    }
+
+    return votes || [];
+}

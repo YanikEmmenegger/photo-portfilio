@@ -1,14 +1,16 @@
 import { FC, useState } from "react";
 import { Media } from "../../types/types.ts";
 import { RiInfoI } from "react-icons/ri";
+import {twMerge} from "tailwind-merge";
 
 interface PhotoProps {
     photo: Media;
     onInfoClick?: () => void;
     onClick?: () => void;
+    hideButtons?: boolean
 }
 
-const Photo: FC<PhotoProps> = ({ photo, onClick, onInfoClick }) => {
+const Photo: FC<PhotoProps> = ({ photo, onClick, onInfoClick, hideButtons }) => {
     const BASE_URL = import.meta.env.VITE_MEDIA_BASE_URL.endsWith('/')
         ? import.meta.env.VITE_MEDIA_BASE_URL
         : `${import.meta.env.VITE_MEDIA_BASE_URL}/`;
@@ -56,7 +58,7 @@ const Photo: FC<PhotoProps> = ({ photo, onClick, onInfoClick }) => {
                 />
             )}
             {/* Info Button */}
-            <div className="absolute top-2 right-2 md:opacity-0 group-hover:opacity-100 flex items-center gap-2 z-10">
+            <div className={twMerge("absolute top-2 right-2 md:opacity-0 group-hover:opacity-100 flex items-center gap-2 z-10", hideButtons && "hidden")}>
                 <button
                     onClick={onInfoClick}
                     className="bg-black/50 text-white p-2 rounded-full"

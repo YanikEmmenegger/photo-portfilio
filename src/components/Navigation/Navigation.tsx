@@ -1,11 +1,12 @@
-import { Link, useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { motion, useAnimation } from 'framer-motion';
+import {Link, useLocation} from 'react-router-dom';
+import {useEffect, useState} from 'react';
+import {motion, useAnimation} from 'framer-motion';
 import NavItem from './NavItem';
-import { BiHeart, BiLogoInstagram } from 'react-icons/bi';
-import { twMerge } from 'tailwind-merge';
-import { CiMenuFries } from 'react-icons/ci';
+import {BiHeart, BiLogoInstagram} from 'react-icons/bi';
+import {twMerge} from 'tailwind-merge';
+import {CiMenuFries} from 'react-icons/ci';
 import {GiWorld} from "react-icons/gi";
+import {MdOutlineCompare} from "react-icons/md";
 
 const Navigation = () => {
     const location = useLocation();
@@ -37,9 +38,10 @@ const Navigation = () => {
         { name: <BiLogoInstagram />, href: 'https://www.instagram.com/kinay.photo/' },
         { name: <BiHeart />, href: '/favorites' },
         { name: <GiWorld />, href: '/world' },
+        {name: <MdOutlineCompare/>, href: '/vote'},
         { name: 'Images', href: '/images' },
         { name: 'Albums', href: '/albums', dropDownOptions: [] },
-        { name: 'About', href: '/about', dropDownOptions: [] },
+        // { name: 'About', href: '/about', dropDownOptions: [] },
         { name: 'Contact', href: '/contact' },
     ];
 
@@ -53,7 +55,7 @@ const Navigation = () => {
         <nav
             className={twMerge(
                 'w-full z-50 py-4 px-10 flex flex-col md:flex-row items-center justify-between',
-                location.pathname === '/world' && 'fixed top-0 left-0 right-0 bg-black' // Fixed nav only on /world page
+                location.pathname === '/world' && 'fixed top-0 left-0 right-0 bg-black', isMobile && "bg-black" // Fixed nav only on /world page
             )}
         >
             <div className='flex items-center justify-between w-full md:w-auto pb-2'>
@@ -76,7 +78,7 @@ const Navigation = () => {
                 className={twMerge('w-full md:w-auto my-7 md:my-0', isOpen ? 'block' : 'hidden md:block')}
                 initial={{ height: 0, opacity: 0 }}
                 animate={controls}
-                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                transition={{duration: 0.1, ease: 'easeInOut'}}
             >
                 <div className='flex flex-col md:flex-row md:gap-6 gap-10 items-center'>
                     {navItems.map((item) => (

@@ -1,11 +1,24 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
-import {supabase} from '../clients/supabaseClient'; // Ensure correct import path
+import {supabase} from '../clients/supabaseClient';
+import {
+    addLikedImageToDb,
+    fetchLikedImagesFromDb,
+    fetchUserVote,
+    getUnvotedMediaPair,
+    removeLikedImageFromDB,
+    submitVoteToDB,
+} from "../utils/supabaseService.ts";
+import {Media, Vote} from "../types/types.ts"; // Ensure correct import path
 
 // Define the context type
 interface UserContextType {
     userId: string | null;
     likedImageIDs: number[];
+    votes: Vote[];
+    votePair: { media1: Media, media2: Media } | null | false
     fetchLikedImages: () => void;
+    submitVote: (selected_photo_id: number) => Promise<boolean>
+    updateVotingPair: (winnerMediaID: number) => void;
     addLikedImage: (photoId: number) => Promise<boolean>;
     removeLikedImage: (photoId: number) => Promise<boolean>;
 }
@@ -17,77 +30,94 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const [userId, setUserId] = useState<string | null>(null);
     const [likedImageIDs, setLikedImageIDs] = useState<number[]>([]);
-    //const [lightboxInstructions, setLightboxInstructions] = useState<boolean>(false);
+    const [votePair, setVotePair] = useState<{ media1: Media, media2: Media } | null | false>(null);
+    const [votes, setVotes] = useState<Vote[] | []>([])
 
-    /*useEffect(() => {
-        // Check localStorage for lightboxInstructions
-        const instructionsShown = localStorage.getItem('lightboxInstructions');
-        if (instructionsShown === 'true') {
-            setLightboxInstructions(true);
-        } else {
-            setLightboxInstructions(false);
-        }
-    }, []);
-
-    const handleSetLightboxInstructions = (value: boolean) => {
-        setLightboxInstructions(value);
-        localStorage.setItem('lightboxInstructions', value.toString());
-    };*/
-
-    // Fetch liked images from the database
     const fetchLikedImages = async () => {
-        if (userId) {
-            const {data: likes, error} = await supabase
-                .from('likes')
-                .select('photo_id')
-                .eq('user_id', userId);
+        const imageIds = await fetchLikedImagesFromDb(userId);
+        setLikedImageIDs(imageIds);
+    };
+    const fetchVotes = async () => {
+        const votes = await fetchUserVote(userId!)
+        setVotes(votes)
+    }
 
-            if (error) {
-                console.error('Error fetching liked images:', error);
+    const setVotingPair = async () => {
+        const mediaPair = await getUnvotedMediaPair(userId)
+
+        if (mediaPair) {
+            setVotePair({media1: mediaPair[0], media2: mediaPair[1]})
+        } else {
+            setVotePair(false)
+        }
+    }
+
+    const submitVote = async (selected_photo_id: number) => {
+
+        if (!userId || !votePair) {
+            return false
+        } else {
+
+            if (await submitVoteToDB(userId, votePair!.media1!.media_id!, votePair!.media2.media_id!, selected_photo_id)) {
+                await updateVotingPair(selected_photo_id)
+                fetchVotes()
+                return true
+            } else {
+                return false
+            }
+        }
+    }
+
+    const updateVotingPair = async (winnerMediaID: number) => {
+        if (!votePair) return;
+
+        const isWinnerMedia1 = votePair.media1.media_id === winnerMediaID;
+        const position = isWinnerMedia1 ? 'media1' : 'media2';
+
+        console.log("Winner was:", position);
+
+        const newPair = await getUnvotedMediaPair(userId, winnerMediaID, position);
+
+        if (newPair && newPair.length === 2) {
+            const mediaA = newPair.find(m => m.media_id !== winnerMediaID);
+            const mediaWinner = newPair.find(m => m.media_id === winnerMediaID);
+
+            if (!mediaA || !mediaWinner) {
+                setVotePair(false);
                 return;
             }
 
-            const imageIds = likes?.map(like => like.photo_id) || [];
-            setLikedImageIDs(imageIds);
+            // Ensure winner stays in the same position
+            setVotePair(
+                position === 'media1'
+                    ? {media1: mediaWinner, media2: mediaA}
+                    : {media1: mediaA, media2: mediaWinner}
+            );
+        } else {
+            setVotePair(false);
         }
     };
 
     // Add a liked image to the database
     const addLikedImage = async (photoId: number) => {
-        if (userId) {
-            const {error} = await supabase
-                .from('likes')
-                .insert([{user_id: userId, photo_id: photoId}]);
-
-            if (error) {
-                console.error('Error adding liked image:', error);
-                return false;
-            }
-
+        if (await addLikedImageToDb(photoId, userId)) {
             setLikedImageIDs(prev => [...prev, photoId]);
             return true;
+        } else {
+            return false;
         }
-        return false;
     };
 
     // Remove a liked image from the database
     const removeLikedImage = async (photoId: number) => {
-        if (userId) {
-            const {error} = await supabase
-                .from('likes')
-                .delete()
-                .match({user_id: userId, photo_id: photoId});
-
-            if (error) {
-                console.error('Error removing liked image:', error);
-                return false;
-            }
-
+        if (await removeLikedImageFromDB(photoId, userId)) {
             setLikedImageIDs(prev => prev.filter(id => id !== photoId));
             return true;
+        } else {
+            return false;
         }
-        return false;
     };
+
 
     useEffect(() => {
         // Fetch current session
@@ -131,6 +161,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
     // Fetch liked images whenever userId changes
     useEffect(() => {
         if (userId) {
+            fetchVotes()
+            setVotingPair()
             fetchLikedImages();
         }
     }, [userId]);
@@ -140,8 +172,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
             userId,
             likedImageIDs,
             fetchLikedImages,
+            votePair,
+            votes,
             addLikedImage,
             removeLikedImage,
+            updateVotingPair, submitVote
         }}>
             {children}
         </UserContext.Provider>

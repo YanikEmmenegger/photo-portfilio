@@ -184,7 +184,7 @@ const MediaInfoBox: FC<MediaInfoBoxProps> = ({ media, onClose, isExpanded }) => 
                                 </p>
                             )}
                             {/* Like Button with Heart Icon */}
-                            <div className="flex items-center gap-2 mb-2">
+                            <div className="flex items-center gap-2 mb-2 cursor-pointer">
                                 <button onClick={toggleLike} className="focus:outline-none">
                                     {isLiked ? (
                                         <RiHeartFill className="text-red-500" size={24} />

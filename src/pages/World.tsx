@@ -15,7 +15,7 @@ const WorldMap = () => {
     useEffect(() => {
         const fetchMedia = async () => {
             try {
-                const mediaData = await fetchPhotosWithFilter({limit: 200000});
+                const mediaData = await fetchPhotosWithFilter({limit: 1000000});
                 setMedia(mediaData || []);
             } catch (error) {
                 console.error("Error fetching media:", error);
@@ -38,11 +38,11 @@ const WorldMap = () => {
         <>
             <ZoomControl map={map}/>
 
-            <div className="flex flex-col flex-grow z-40 min-h-0 bg-gray-900">
+            <div className="flex flex-col flex-grow z-30 h-screen bg-gray-900">
                 {/* External Zoom Controls (now independent of the map provider) */}
                 // @ts-ignore
             <MapContainer
-                center={[51.505, -0.09]}
+                center={[17.6,8]}
                 zoomControl={false} fadeAnimation={true}
                 zoom={3}
                 scrollWheelZoom={true}
@@ -56,10 +56,10 @@ const WorldMap = () => {
             >
                 <TileLayer
                     attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-                    url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                    url="https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png"
                 />
 
-                <MarkerClusterGroup>
+                <MarkerClusterGroup >
                     {media.map((item, index) =>
                         item.gpsInfos?.latitude && item.gpsInfos?.longitude ? (
                             <Marker

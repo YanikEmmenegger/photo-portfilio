@@ -56,3 +56,11 @@ export interface FetchPhotosFilter {
     sort?: SortType
 }
 
+export type Vote = {
+    vote_id: string; // UUID
+    user_id: string | null; // UUID or null for anonymous
+    media1_id: number; // FK to photos.photo_id
+    media2_id: number; // FK to photos.photo_id
+    selected_photo_id: number; // FK to photos.photo_id
+    voted_at: string; // ISO timestamp string (e.g., from PostgreSQL `timestamptz`)
+};
