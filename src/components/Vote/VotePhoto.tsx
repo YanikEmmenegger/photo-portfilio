@@ -18,7 +18,7 @@ const VotePhoto: FC<Props> = ({photo}) => {
     const originalUrl = `${BASE_URL}${photo.filename}-big${photo.extension}`;
 
     return (
-        <div className="relative w-full h-full overflow-hidden hover:border-0 border-2 border-black">
+        <div className="relative w-full h-full overflow-hidden">
             {thumbnailUrl && (
                 <img
                     src={thumbnailUrl}

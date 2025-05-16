@@ -1,7 +1,9 @@
-import { FC, useEffect, useState } from "react";
-import { FetchPhotosFilter, Media, Vote } from "../../types/types.ts";
-import { fetchPhotosWithFilter } from "../../utils/supabaseService.ts";
+import {FC, useEffect, useState} from "react";
+import {FetchPhotosFilter, Media, Vote} from "../../types/types.ts";
+import {fetchPhotosWithFilter} from "../../utils/supabaseService.ts";
 import {twMerge} from "tailwind-merge";
+import {BsCameraVideo} from "react-icons/bs";
+import {AiOutlineCheck, AiOutlineStop} from "react-icons/ai"; // Looser icon
 
 interface HistoryItemProps {
     vote: Vote;
@@ -30,7 +32,7 @@ const HistoryItem: FC<HistoryItemProps> = ({ vote }) => {
         fetchImages();
     }, [vote]);
 
-    if (loading) return <div className="text-neutral-400 text-sm">Loading...</div>;
+    if (loading) return <div className="text-neutral-400 text-sm"></div>;
     if (error) return <div className="text-red-500 text-sm">{error}</div>;
 
     return (
@@ -40,19 +42,43 @@ const HistoryItem: FC<HistoryItemProps> = ({ vote }) => {
                 const baseUrl = import.meta.env.VITE_MEDIA_BASE_URL.endsWith("/")
                     ? import.meta.env.VITE_MEDIA_BASE_URL
                     : `${import.meta.env.VITE_MEDIA_BASE_URL}/`;
-                const src = `${baseUrl}${media.filename}${media.extension}`;
+
+                const src =
+                    media.extension === ".mp4"
+                        ? `${baseUrl}${media.filename}.jpg`
+                        : `${baseUrl}${media.filename}${media.extension}`;
 
                 return (
                     <div
                         key={media.media_id}
-                        className={twMerge(`relative w-60 h-40 rounded-md overflow-hidden border-0 `, !isSelected && "opacity-40 rotate-12")}
+                        className={twMerge(
+                            `relative w-30 h-20 md:w-60 md:h-40 rounded-md overflow-hidden border-0`,
+                            !isSelected && "opacity-40 rotate-12"
+                        )}
                     >
                         <img
                             src={src}
                             alt={media.title || "Photo"}
-                            className={"w-full h-full object-cover"}
+                            className="w-full h-full object-cover"
                         />
 
+                        {/* Video Icon */}
+                        {media.extension === ".mp4" && (
+                            <BsCameraVideo className="absolute bottom-1 left-1 w-5 h-5 opacity-80 text-white"/>
+                        )}
+
+                        {/* Looser Overlay Icon */}
+                        {!isSelected ? (
+                            <div className="absolute top-1 right-1 rounded-full p-1">
+                                <AiOutlineStop className="w-6 h-6 text-red-500"/>
+                            </div>
+                        ) : (
+                            <div className="absolute top-1 right-1 rounded-full p-1">
+                                <AiOutlineCheck className="w-6 h-6 text-green-500"/>
+                            </div>
+                        )
+
+                        }
                     </div>
                 );
             })}

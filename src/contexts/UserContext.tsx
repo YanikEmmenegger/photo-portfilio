@@ -4,7 +4,7 @@ import {
     addLikedImageToDb,
     fetchLikedImagesFromDb,
     fetchUserVote,
-    getUnvotedMediaPair,
+    fetchUnvotedMediaPair,
     removeLikedImageFromDB,
     submitVoteToDB,
 } from "../utils/supabaseService.ts";
@@ -43,7 +43,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
     }
 
     const setVotingPair = async () => {
-        const mediaPair = await getUnvotedMediaPair(userId)
+        const mediaPair = await fetchUnvotedMediaPair(userId)
 
         if (mediaPair) {
             setVotePair({media1: mediaPair[0], media2: mediaPair[1]})
@@ -58,9 +58,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
             return false
         } else {
 
-            if (await submitVoteToDB(userId, votePair!.media1!.media_id!, votePair!.media2.media_id!, selected_photo_id)) {
+            const submittedVote = await submitVoteToDB(userId, votePair!.media1!.media_id!, votePair!.media2.media_id!, selected_photo_id)
+
+            if (submittedVote && submittedVote.length !== 0) {
                 await updateVotingPair(selected_photo_id)
-                fetchVotes()
+                setVotes(prev => [...prev, submittedVote[0]]);
                 return true
             } else {
                 return false
@@ -76,7 +78,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
         console.log("Winner was:", position);
 
-        const newPair = await getUnvotedMediaPair(userId, winnerMediaID, position);
+        const newPair = await fetchUnvotedMediaPair(userId, winnerMediaID, position);
 
         if (newPair && newPair.length === 2) {
             const mediaA = newPair.find(m => m.media_id !== winnerMediaID);

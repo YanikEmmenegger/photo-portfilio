@@ -1,5 +1,5 @@
 import {supabase} from '../clients/supabaseClient';
-import {Album, FetchPhotosFilter, KeywordWithGroup, Media, Vote} from '../types/types';
+import {Album, FetchPhotosFilter, KeywordWithGroup, Media, TopMedia, Vote} from '../types/types';
 import {transformToAlbum, transformToKeywordWithGroup, transformToPhoto} from './transformToTypes';
 
 /**
@@ -213,19 +213,25 @@ export const removeLikedImageFromDB = async (photoId: number, userId: string | n
 
 export const submitVoteToDB = async (userId: string, media1_id: number, media2_id: number, selected_photo_id: number) => {
     if (!userId) return false
-    const {error} = await supabase
+    const {data, error} = await supabase
         .from('votes')
-        .insert([{user_id: userId, media1_id: media1_id, media2_id: media2_id, selected_photo_id: selected_photo_id}]);
+        .insert([{
+            user_id: userId,
+            media1_id: media1_id,
+            media2_id: media2_id,
+            selected_photo_id: selected_photo_id
+        }]).select();
+
 
     if (error) {
         console.error('Error adding liked image:', error);
         return false;
     }
-    return true;
+    return data
 }
 
 
-export const getUnvotedMediaPair = async (userId: string | null, photoId?: number, position?: string) => {
+export const fetchUnvotedMediaPair = async (userId: string | null, photoId?: number, position?: string) => {
     if (!userId) return false
 
     try {
@@ -267,4 +273,21 @@ export const fetchUserVote = async (userId: string): Promise<Vote[]> => {
     }
 
     return votes || [];
+}
+
+
+export const fetchTopRatedMedias = async (limit?: number): Promise<TopMedia[]> => {
+    if (!limit) {
+        limit = 10
+    }
+
+    const {data, error} = await supabase.rpc('get_top_photos', limit)
+
+    if (error) {
+        console.error('Error fetching votes :', error);
+        return [];
+    }
+
+    return data || []
+
 }

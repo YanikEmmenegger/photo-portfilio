@@ -64,3 +64,10 @@ export type Vote = {
     selected_photo_id: number; // FK to photos.photo_id
     voted_at: string; // ISO timestamp string (e.g., from PostgreSQL `timestamptz`)
 };
+
+export type TopMedia = {
+    photo_id: number;
+    wins: number;
+    appearances: number;
+    win_rate: number; // rounded to 4 decimals in SQL, so number is fine
+};

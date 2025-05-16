@@ -1,15 +1,28 @@
-import { FC, useEffect, useState } from "react";
-import { useUser } from "../contexts/UserContext.tsx";
-import { Media } from "../types/types.ts";
+import {FC, useEffect, useState} from "react";
+import {useUser} from "../contexts/UserContext.tsx";
+import {Media} from "../types/types.ts";
 import VotePhoto from "../components/Vote/VotePhoto.tsx";
-import { AnimatePresence, motion } from "framer-motion";
+import {AnimatePresence, motion} from "framer-motion";
 import VoteHistory from "../components/Vote/VoteHistory.tsx";
 import FavoriteVote from "../components/Vote/FavoriteVote.tsx";
+import VoteVideo from "../components/Vote/VoteVideo.tsx";
+import MediaInfoBox from "../components/Gallery/MediaInfoBox.tsx";
+import {AiOutlineFullscreen} from "react-icons/ai";
 
 const VotingPage: FC = () => {
     const { votePair, submitVote } = useUser();
     const [loading, setLoading] = useState(true);
     const [heart, setHeart] = useState<{ x: number; y: number } | null>(null);
+
+    const [mediaInInfoBox, setMediaInInfoBox] = useState<Media | null>(null);
+
+    // Disable scrolling when modal open
+    useEffect(() => {
+        document.body.style.overflow = mediaInInfoBox ? "hidden" : "";
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [mediaInInfoBox]);
 
     useEffect(() => {
         setLoading(!votePair);
@@ -27,17 +40,44 @@ const VotingPage: FC = () => {
     };
 
     const renderMedia = (media: Media) => (
-        <div
-            key={media.media_id}
-            className="w-full h-[45vh] md:h-[80vh] flex items-center justify-center overflow-hidden cursor-pointer"
-            onClick={(e) => handleVote(e, media)}
-        >
-            <VotePhoto photo={media} />
+        <div className={"relative group"}>
+            <div
+                key={media.media_id}
+                className="w-full h-[40vh] md:h-[55vh] group flex items-center transition duration-500 rounded justify-center overflow-hidden cursor-pointer hover:scale-[101%]"
+                onClick={(e) => handleVote(e, media)}
+            >
+                {media.extension === ".mp4" ? (
+                    <VoteVideo video={media}/>
+                ) : (
+                    <VotePhoto photo={media}/>
+                )}
+            </div>
+            <div className="absolute hidden md:block top-2 right-2 opacity-50 group-hover:opacity-100 transition-opacity">
+                <AiOutlineFullscreen onClick={() => setMediaInInfoBox(media)}
+                                     className="w-8 h-8 cursor-pointer text-white"/>
+            </div>
         </div>
     );
 
+    const renderSkeleton = (key: string | number) => (
+        <motion.div
+            key={key}
+            className="w-full h-[40vh] md:h-[55vh] bg-neutral-800 animate-pulse rounded-lg"
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            exit={{opacity: 0}}
+        />
+    );
+
     return (
-        <>
+        <>{mediaInInfoBox && (
+            <MediaInfoBox
+                isExpanded={true}
+                media={mediaInInfoBox}
+                onClose={() => setMediaInInfoBox(null)}
+            />
+        )}
+
             <AnimatePresence>
                 {heart && (
                     <motion.div
@@ -61,27 +101,24 @@ const VotingPage: FC = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
-        <div className="min-h-screen bg-neutral-950 text-white flex flex-col items-center justify-center p-4 space-y-4 relative">
-            <h1 className="text-2xl md:text-4xl font-semibold text-center text-white drop-shadow-lg">
-                Pick your favorite?
-            </h1>
 
-            <div className="w-full max-w-screen-xl flex-1 flex items-center justify-center">
-                {loading ? (
-                    <h2 className="text-xl text-gray-300">Loading...</h2>
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 w-full max-h-full">
-                        {votePair && [votePair.media1, votePair.media2].map(renderMedia)}
+            <div className="mb-10 text-white flex flex-col items-center justify-center p-4 space-y-3 relative">
+                <h1 className="text-2xl md:text-4xl md:my-20 my-10 font-semibold text-center text-white drop-shadow-lg">
+                    Vote for your Favorite ❤️
+                </h1>
+
+                <div className="w-full max-w-screen-xl flex-1 flex items-center justify-center">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-h-full">
+                        {loading
+                            ? [0, 1].map(renderSkeleton)
+                            : votePair && [votePair.media1, votePair.media2].map(renderMedia)}
                     </div>
-                )}
+                </div>
             </div>
 
-            {/* Heart animation container */}
-
-        </div>
             <FavoriteVote/>
-           <VoteHistory/>
-            </>
+            <VoteHistory/>
+        </>
     );
 };
 
