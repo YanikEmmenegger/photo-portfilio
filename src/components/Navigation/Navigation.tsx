@@ -8,6 +8,7 @@ import {CiMenuFries} from 'react-icons/ci';
 import {GiWorld} from "react-icons/gi";
 import {MdOutlineCompare} from "react-icons/md";
 import {useUser} from "../../contexts/UserContext.tsx";
+import NotificationToggle from "../Notifications/NotificationToggle.tsx";
 
 const Navigation = () => {
     const location = useLocation();
@@ -93,6 +94,7 @@ const Navigation = () => {
                 transition={{duration: 0.1, ease: 'easeInOut'}}
             >
                 <div className='flex flex-col md:flex-row md:gap-6 gap-10 items-center'>
+                    <NotificationToggle/>
                     {[...navItems, {name: userId ? 'Logout' : 'Login', href: '#'}].map((item) => (
                         <NavItem
                             key={item.href + item.name}
