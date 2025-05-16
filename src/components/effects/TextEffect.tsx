@@ -112,14 +112,13 @@ AnimationComponent.displayName = 'AnimationComponent';
 export function TextEffect({
                                children,
                                per = 'word',
-                               as = 'p',
+                               //as = 'p',
                                variants,
                                className,
                                preset,
                            }: TextEffectProps) {
     const words = children.split(/(\S+)/).filter(Boolean); // Filter out empty strings
     // const MotionTag = motion[as as keyof typeof motion];
-    console.log(as)
     const selectedVariants = preset
         ? presetVariants[preset]
         : {container: defaultContainerVariants, item: defaultItemVariants};

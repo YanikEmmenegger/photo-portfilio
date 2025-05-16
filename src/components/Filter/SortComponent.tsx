@@ -12,7 +12,6 @@ const SortComponent: FC<SortComponentProps> = ({
                                                }) => {
     const handleSortModeChange = (newSortMode: "Newest" | "Oldest") => {
         onSortModeChange(newSortMode);
-        console.log(newSortMode);
     };
 
     return (

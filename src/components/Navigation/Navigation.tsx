@@ -7,12 +7,14 @@ import {twMerge} from 'tailwind-merge';
 import {CiMenuFries} from 'react-icons/ci';
 import {GiWorld} from "react-icons/gi";
 import {MdOutlineCompare} from "react-icons/md";
+import {useUser} from "../../contexts/UserContext.tsx";
 
 const Navigation = () => {
     const location = useLocation();
     const [isOpen, setIsOpen] = useState(true);
     const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 768);
     const controls = useAnimation();
+    const {userId, logout, openLoginModal} = useUser();
 
     useEffect(() => {
         controls.start({ height: isOpen ? 'auto' : 0, opacity: isOpen ? 1 : 0 });
@@ -41,9 +43,16 @@ const Navigation = () => {
         {name: <MdOutlineCompare/>, href: '/vote'},
         { name: 'Images', href: '/images' },
         { name: 'Albums', href: '/albums', dropDownOptions: [] },
-        // { name: 'About', href: '/about', dropDownOptions: [] },
         { name: 'Contact', href: '/contact' },
     ];
+
+    const handleLoginLogout = () => {
+        if (userId) {
+            logout();
+        } else {
+            openLoginModal()
+        }
+    };
 
     const closeMenu = () => {
         if (isMobile) {
@@ -55,13 +64,16 @@ const Navigation = () => {
         <nav
             className={twMerge(
                 'w-full z-50 py-4 px-10 flex flex-col md:flex-row items-center justify-between',
-                location.pathname === '/world' && 'fixed top-0 left-0 right-0 bg-black', isMobile && "bg-black" // Fixed nav only on /world page
+                location.pathname === '/world' && 'fixed top-0 left-0 right-0 bg-black',
+                isMobile && "bg-black"
             )}
         >
             <div className='flex items-center justify-between w-full md:w-auto pb-2'>
                 <Link to='/'>
                     <div
-                        onClick={() => closeMenu()}
+                        onClick={() => {
+                            if (isOpen) closeMenu()
+                        }}
                         className='hover:text-gray-300 transition-colors text-2xl md:text-3xl lg:text-5xl xl:text-7xl'
                     >
                         KINAY PHOTO
@@ -81,12 +93,24 @@ const Navigation = () => {
                 transition={{duration: 0.1, ease: 'easeInOut'}}
             >
                 <div className='flex flex-col md:flex-row md:gap-6 gap-10 items-center'>
-                    {navItems.map((item) => (
+                    {[...navItems, {name: userId ? 'Logout' : 'Login', href: '#'}].map((item) => (
                         <NavItem
-                            onclick={() => closeMenu()}
-                            key={item.href}
+                            key={item.href + item.name}
                             href={item.href}
                             active={location.pathname.includes(item.href)}
+                            onclick={(e) => {
+                                // Always close the menu if mobile
+                                closeMenu();
+
+                                if (item.name === 'Login' || item.name === 'Logout') {
+                                    e.preventDefault();
+                                    handleLoginLogout();
+                                } else if (item.href === '/favorites' && !userId) {
+                                    e.preventDefault();
+                                    openLoginModal(); // Trigger login modal if not logged in
+                                }
+                                // Else allow default behavior (i.e. go to the link)
+                            }}
                         >
                             {item.name}
                         </NavItem>
