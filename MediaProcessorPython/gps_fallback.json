@@ -1,0 +1,49 @@
+{
+  "Cozumel": {
+    "Latitude": 20.510,
+    "Longitude": -86.945
+  },
+  "Puerto Rico": {
+    "Latitude": 18.2208,
+    "Longitude": -66.5901
+  },
+  "La Réunion": {
+    "Latitude": -21.1151,
+    "Longitude": 55.5364
+  },
+  "Bern": {
+    "Latitude": 46.9480,
+    "Longitude": 7.4474
+  },
+  "Isla Mujeres": {
+    "Latitude": 21.2312,
+    "Longitude": -86.7352
+  },
+"Gran Cenote": {
+  "Latitude": 20.228532 ,
+    "Longitude": -87.459
+},
+  "Sian Ka'an": {
+    "Latitude": 20.052978,
+    "Longitude": -87.589659
+  },
+  "Palancar /Yucab": {
+    "Latitude": 20.327032,
+    "Longitude": -87.079445},
+  "Playa Del Carmen": {
+    "Latitude": 20.629,
+    "Longitude": -87.060454
+  },
+  "C-53": {
+    "Latitude": 20.466984,
+    "Longitude": -87.003761
+  },
+  "Valladolid": {
+    "Latitude": 20.6896,
+    "Longitude": -88.2015
+  },
+  "Chichen Itza": {
+    "Latitude": 20.6843,
+    "Longitude": -88.5678
+  }
+}
