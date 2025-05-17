@@ -17,6 +17,7 @@ dist-ssr
 # Local environment files
 **/.env*
 !.env.example  # Optional: allow sample env file to be committed
+.env
 
 # Editor directories and files
 .vscode/*
@@ -28,3 +29,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
