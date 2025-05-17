@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import {supabase} from "../clients/supabaseClient";
 import {useUser} from "../contexts/UserContext.tsx";
 
@@ -7,8 +7,7 @@ const VAPID_PUBLIC_KEY =
     "BG3cnLsLaFFQyVgNEXknUOSKiQGnMSXgk1_hrDasT-n8OxVreohXjS1Y833k4Mf80NQ7JeDDwsdDGWm0ti_NaWE";
 
 export const useNotificationRegistration = () => {
-    const [isSubscribed, setIsSubscribed] = useState(false);
-    const {userId} = useUser();
+    const {userId, isSubscribed, setIsSubscribed} = useUser();
 
     // ✅ Load subscription state on mount
     useEffect(() => {

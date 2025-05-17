@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { supabase } from '../clients/supabaseClient';
+import React, {createContext, Dispatch, SetStateAction, useContext, useEffect, useState} from 'react';
+import {supabase} from '../clients/supabaseClient';
 import {
     addLikedImageToDb,
     fetchLikedImagesFromDb,
@@ -8,8 +8,10 @@ import {
     removeLikedImageFromDB,
     submitVoteToDB,
 } from '../utils/supabaseService.ts';
-import { Media, Vote } from '../types/types.ts';
+import {Media, Vote} from '../types/types.ts';
 import LoginPopup from '../components/Login/LoginPopup.tsx';
+import NotificationPopup from "../components/Notifications/NotificationPopup.tsx";
+import {isIOSDevice} from "../utils/isiPhoneiPad.ts";
 
 interface UserContextType {
     userId: string | null;
@@ -25,6 +27,8 @@ interface UserContextType {
     requireLogin: () => Promise<boolean>;
     logout: () => Promise<void>;
     authLoading: boolean; // NEW
+    isSubscribed: boolean;
+    setIsSubscribed: Dispatch<SetStateAction<boolean>>
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -36,6 +40,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [votes, setVotes] = useState<Vote[]>([]);
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [authLoading, setAuthLoading] = useState(true); // NEW
+    const [isSubscribed, setIsSubscribed] = useState(false)
+
+    const [showNotificationPopup, setShowNotificationPopup] = useState(false);
 
     const openLoginModal = () => setShowLoginModal(true);
     const closeLoginModal = () => setShowLoginModal(false);
@@ -48,6 +55,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
         return true;
     };
+
 
     const logout = async () => {
         await supabase.auth.signOut();
@@ -164,6 +172,14 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }
             setUserId(session?.user?.id ?? null);
             setAuthLoading(false); // ✅ Done loading
+
+            if (session?.user?.id && !localStorage.getItem('notificationPromptShown') && !isIOSDevice()) {
+                setShowNotificationPopup(true);
+                localStorage.setItem('notificationPromptShown', 'true');
+            }
+
+
+
         };
 
         fetchSession();
@@ -171,6 +187,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
             setUserId(session?.user?.id ?? null);
             if (!session?.user?.id) {
+
+
                 setLikedImageIDs([]);
                 setVotes([]);
                 setVotePair(null);
@@ -204,12 +222,15 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 submitVote,
                 openLoginModal,
                 requireLogin,
-                logout,
+                logout, isSubscribed, setIsSubscribed,
                 authLoading // ✅ exposed here
             }}
         >
             {children}
             {showLoginModal && <LoginPopup onClose={closeLoginModal} />}
+            {showNotificationPopup && (
+                <NotificationPopup onClose={() => setShowNotificationPopup(false)}/>
+            )}
         </UserContext.Provider>
     );
 };
