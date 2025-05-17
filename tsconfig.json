@@ -1,4 +1,5 @@
 {
+  "exclude": ["edge-functions/supabase/functions/send-notifications/"],
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },

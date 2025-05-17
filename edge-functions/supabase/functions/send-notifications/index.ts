@@ -1,6 +1,14 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 import webpush from "npm:web-push";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 const VAPID_PUBLIC_KEY = Deno.env.get("VAPID_PUBLIC_KEY");
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 const VAPID_PRIVATE_KEY = Deno.env.get("VAPID_PRIVATE_KEY");
 const VAPID_SUBJECT = "mailto:no-reply@photo.yanik.pro";
 if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY) {
@@ -10,8 +18,14 @@ webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
 serve(async (req)=>{
   try {
     const { title, body } = await req.json();
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
     const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY");
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY || !SUPABASE_ANON_KEY) {
       return new Response(JSON.stringify({
